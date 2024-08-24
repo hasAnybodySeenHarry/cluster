@@ -1,4 +1,9 @@
-helm upgrade my-infra application-infrastructure/
-helm upgrade expenses expenses/
-helm upgrade notifier notifier/
-helm upgrade throttler throttler/
+helm uninstall my-infra
+helm uninstall expenses
+helm uninstall notifier
+helm uninstall throttler
+
+helm install my-infra application-infrastructure/
+helm install expenses expenses/
+helm install notifier notifier/
+helm install throttler throttler/
