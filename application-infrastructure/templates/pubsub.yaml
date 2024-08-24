@@ -66,9 +66,7 @@ spec:
           key: port
     ports:
     - containerPort: 9092
-      name: kafka
     - containerPort: 9093
-      name: kafka-management
     volumeMounts:
     - name: kafka-data
       mountPath: /bitnami/kafka
