@@ -68,7 +68,7 @@ spec:
             name: expenses
             port:
               number: 8080
-        path: /expenses/
+        path: /
         pathType: Prefix
       - backend:
           service:
