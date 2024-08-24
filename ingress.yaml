@@ -65,17 +65,16 @@ spec:
       paths:
       - backend:
           service:
-            name: development-expenses
+            name: expenses
             port:
               number: 8080
-        path: /
+        path: /v1/expenses/
         pathType: Prefix
-  - http:
-      paths:
       - backend:
           service:
-            name: development-notifier
+            name: notifier
             port:
               number: 8080
-        path: /notifications
+        path: /v1/notifier/
         pathType: Prefix
+      
