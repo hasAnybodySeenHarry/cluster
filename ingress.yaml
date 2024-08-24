@@ -68,13 +68,13 @@ spec:
             name: expenses
             port:
               number: 8080
-        path: /v1/expenses/
+        path: /expenses/
         pathType: Prefix
       - backend:
           service:
             name: notifier
             port:
               number: 8080
-        path: /v1/notifier/
+        path: /notifier/
         pathType: Prefix
       
