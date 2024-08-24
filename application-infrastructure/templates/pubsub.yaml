@@ -50,10 +50,8 @@ spec:
       value: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
     - name: KAFKA_LISTENERS
       value: INSIDE://0.0.0.0:9092,OUTSIDE://localhost:9093
-    - name: KAFKA_LISTENER_NAME
-      value: INSIDE
     - name: KAFKA_ADVERTISED_LISTENERS
-      value: INSIDE://$(KAFKA_HOST):$(KAFKA_PORT),OUTSIDE://localhost:9093
+      value: INSIDE://kafka-node:9092,OUTSIDE://localhost:9093
     - name: KAFKA_INTER_BROKER_LISTENER_NAME
       value: INSIDE
     - name: KAFKA_HOST
@@ -68,7 +66,9 @@ spec:
           key: port
     ports:
     - containerPort: 9092
+      name: kafka
     - containerPort: 9093
+      name: kafka-management
     volumeMounts:
     - name: kafka-data
       mountPath: /bitnami/kafka
