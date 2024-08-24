@@ -1,0 +1,116 @@
+service:
+  type: ClusterIP
+  port: 8080
+  internalPort: 8080
+
+replicaCount: 1
+
+image:
+  registry: docker.io
+  repository: "demona9458/notifier"
+  tag: "latest"
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+serviceAccountName: default
+
+deploymentAnnotations: {}
+podAnnotations: {}
+
+podSecurityContext: {}
+
+serviceAccount:
+  create: false
+  name: ""
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsGroup: 1001
+  runAsNonRoot: true
+  runAsUser: 1001
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+livenessProbe:
+  path: /v1/healthcheck
+  port: 8080
+
+readinessProbe:
+  path: /v1/healthcheck
+  port: 8080
+
+startupProbe:
+  path: /v1/healthcheck
+  port: 8080
+
+topologySpreadConstraints: []
+
+extraEnv: []
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  maxUnavailable: ""
+
+env:
+- name: GRPC_ADDR
+  value: ""
+- name: PORT
+  value: "8080"
+- name: ENV
+  value: "development"
+- name: MONGO_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: mongo-secrets
+      key: username
+- name: MONGO_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: mongo-secrets
+      key: password
+- name: MONGO_HOST
+  valueFrom:
+    secretKeyRef:
+      name: mongo-secrets
+      key: host
+- name: MONGO_PORT
+  valueFrom:
+    secretKeyRef:
+      name: mongo-secrets
+      key: port
+- name: MONGO_DATABASE
+  valueFrom:
+    secretKeyRef:
+      name: mongo-secrets
+      key: database
+- name: PUB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: pubsub-secrets
+      key: host
+- name: PUB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: pubsub-secrets
+      key: port
