@@ -26,6 +26,9 @@ spec:
         secretKeyRef:
           name: mongo-secrets
           key: database
+    volumeMounts:
+    - name: mongo-data
+      mountPath: /bitnami/mongo
   volumes:
   - name: mongo-data
     emptyDir: {}
