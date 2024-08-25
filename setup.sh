@@ -18,3 +18,5 @@ helm install notifier notifier/
 helm install throttler throttler/
 
 kubectl apply -f ingress.yaml
+
+kubectl get svc ingress-nginx-controller -n ingress-nginx -o yaml | yq eval '.spec.ports[0].nodePort' -
