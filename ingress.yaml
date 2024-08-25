@@ -69,12 +69,12 @@ spec:
             port:
               number: 8080
         path: /expenses/(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
       - backend:
           service:
             name: notifier
             port:
               number: 8080
         path: /notifier/(.*)
-        pathType: Prefix
+        pathType: ImplementationSpecific
       
