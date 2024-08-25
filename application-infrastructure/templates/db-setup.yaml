@@ -3,9 +3,9 @@ kind: Job
 metadata:
   name: postgres-setup-job
 spec:
+  ttlSecondsAfterFinished: 180
   template:
     spec:
-      ttlSecondsAfterFinished: 180
       containers:
       - name: setup
         image: alpine:latest
