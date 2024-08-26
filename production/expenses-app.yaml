@@ -15,7 +15,7 @@ spec:
     helm:
       valueFiles:
       - values.yaml
-      # releaseName: prod-release
+      - prod-values.yaml
   syncPolicy:
     automated:
       prune: true
