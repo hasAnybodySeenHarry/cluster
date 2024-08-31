@@ -9,14 +9,14 @@ spec:
       app: expenses
   policyTypes:
   - Ingress
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: notifier
-    - podSelector:
-        matchLabels:
-          app: throttler
-    ports:
-    - protocol: TCP
-      port: 50051
+  # ingress:
+  # - from:
+  #   - podSelector:
+  #       matchLabels:
+  #         app: notifier
+  #   - podSelector:
+  #       matchLabels:
+  #         app: throttler
+  #   ports:
+  #   - protocol: TCP
+  #     port: 50051
