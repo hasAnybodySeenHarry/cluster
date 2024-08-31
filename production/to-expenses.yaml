@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: to-expenses
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: expenses
+  policyTypes:
+    - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: notifier
+    - podSelector:
+        matchLabels:
+          app: throttler
+    ports:
+      - protocol: TCP
+        port: 50051
