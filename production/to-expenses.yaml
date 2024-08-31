@@ -6,17 +6,17 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: expenses
+      app.kubernetes.io/name: expenses
   policyTypes:
   - Ingress
-  # ingress:
-  # - from:
-  #   - podSelector:
-  #       matchLabels:
-  #         app: notifier
-  #   - podSelector:
-  #       matchLabels:
-  #         app: throttler
-  #   ports:
-  #   - protocol: TCP
-  #     port: 50051
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: notifier
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: throttler
+    ports:
+    - protocol: TCP
+      port: 50051
