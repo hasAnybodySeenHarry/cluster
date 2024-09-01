@@ -1,7 +1,6 @@
 # prometheus (helm-provider)
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update prometheus-community
-helm search repo prometheus-community
 
 helm install prometheus prometheus-community/kube-prometheus-stack \
     --version "62.3.1" \
@@ -10,7 +9,8 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 
 # prometheus-adapter (helm-provider)
 helm upgrade --install prometheus-adapter prometheus-community/prometheus-adapter \
-    -f ./adapter/values.yaml
+    -f ./adapter/values.yaml \
+    --namespace monitoring
 
 # argocd (helm-provider)
 helm repo add argo https://argoproj.github.io/argo-helm

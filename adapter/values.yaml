@@ -1,3 +1,5 @@
+prometheus:
+  url: http://prometheus.monitoring.svc:9090
 rules:
   custom:
   - seriesQuery: 'total_http_requests{service="throttler", namespace="default"}'
