@@ -10,7 +10,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 
 # prometheus-adapter (helm-provider)
 helm upgrade --install prometheus-adapter prometheus-community/prometheus-adapter \
-    -f /adapter/values.yaml
+    -f ./adapter/values.yaml
 
 # argocd (helm-provider)
 helm repo add argo https://argoproj.github.io/argo-helm

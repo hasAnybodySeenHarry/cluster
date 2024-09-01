@@ -50,7 +50,10 @@ spec:
       app.kubernetes.io/name: throttler
   ingress:
   - from:
-    - podSelector:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+      podSelector:
         matchLabels:
           app.kubernetes.io/name: prometheus
     ports:
