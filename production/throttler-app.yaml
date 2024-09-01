@@ -20,3 +20,18 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: throttler-metrics
+  namespace: default
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: throttler
+  endpoints:
+  - port: http
+    interval: 15s
