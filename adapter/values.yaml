@@ -1,11 +1,11 @@
 rules:
   custom:
-  - seriesQuery: 'total_http_requests'
+  - seriesQuery: 'total_http_requests{service="throttler", namespace="default"}'
     resources:
       overrides:
-        namespace: {resource: "namespace"}
-        pod: {resource: "pod"}
+        namespace:
+          resource: namespace
     name:
-      matches: "total_http_requests"
-      as: "http_requests_per_second"
-    metricsQuery: 'sum(rate(total_http_requests{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)'
+      matches: ".*"
+      as: "http_requests_total"
+    metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default"}[1m]))'
