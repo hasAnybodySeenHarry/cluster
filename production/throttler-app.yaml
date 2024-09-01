@@ -32,6 +32,9 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: throttler
+  namespaceSelector:
+    matchNames:
+    - default
   endpoints:
   - port: http
     interval: 15s
