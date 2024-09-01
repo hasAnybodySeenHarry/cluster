@@ -1,0 +1,11 @@
+rules:
+  custom:
+  - seriesQuery: 'total_http_requests'
+    resources:
+      overrides:
+        namespace: {resource: "namespace"}
+        pod: {resource: "pod"}
+    name:
+      matches: "total_http_requests"
+      as: "http_requests_per_second"
+    metricsQuery: 'sum(rate(total_http_requests{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)'
