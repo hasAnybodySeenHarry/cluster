@@ -2,12 +2,14 @@ prometheus:
   url: http://prometheus-kube-prometheus-prometheus.monitoring.svc
 rules:
   custom:
-  - seriesQuery: 'total_http_requests{service="throttler", namespace="default"}'
+  - seriesQuery: 'total_http_requests{service="throttler", namespace="default", pod!=""}'
     resources:
       overrides:
         namespace:
           resource: namespace
+        pod:
+          resource: pod
     name:
       matches: "total_http_requests"
-      as: "http_requests_total"
-    metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default"}[1m]))'
+      as: "total_http_requests"
+    metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default", pod!=""}[1m])) by (pod)'
