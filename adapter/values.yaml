@@ -8,6 +8,6 @@ rules:
         namespace:
           resource: namespace
     name:
-      matches: ".*"
+      matches: "total_http_requests"
       as: "http_requests_total"
     metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default"}[1m]))'
