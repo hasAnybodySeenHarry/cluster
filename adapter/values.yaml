@@ -14,7 +14,7 @@ rules:
       as: "total_http_requests"
     metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default"}[1m])) by (pod)'
 
-  - seriesQuery: 'rabbitmq_queue_messages_ready'
+  - seriesQuery: 'rabbitmq_queue_messages_ready{service="rabbitmq-proxy", namespace="default"}'
     resources:
       overrides:
         namespace:
@@ -24,4 +24,4 @@ rules:
     name:
       matches: "rabbitmq_queue_messages_ready"
       as: "rabbitmq_queue_messages_ready"
-    metricsQuery: 'sum(rabbitmq_queue_messages_ready) by (queue)'
+    metricsQuery: 'sum(rabbitmq_queue_messages_ready) by (pod)'
