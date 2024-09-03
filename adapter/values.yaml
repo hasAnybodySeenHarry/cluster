@@ -13,3 +13,15 @@ rules:
       matches: "total_http_requests"
       as: "total_http_requests"
     metricsQuery: 'sum(rate(total_http_requests{service="throttler", namespace="default"}[1m])) by (pod)'
+
+  - seriesQuery: 'rabbitmq_queue_messages_ready'
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      name:
+        matches: "rabbitmq_queue_messages_ready"
+        as: "email_queue_length"
+      metricsQuery: 'sum(rabbitmq_queue_messages_ready) by (queue)'
