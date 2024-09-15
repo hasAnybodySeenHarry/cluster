@@ -9,7 +9,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
 
 # prometheus-adapter (helm-provider)
 helm upgrade --install prometheus-adapter prometheus-community/prometheus-adapter \
-    -f ./adapter/values.yaml \
+    -f ./prom-adapter/values.yaml \
     --namespace monitoring
 
 # argocd (helm-provider)

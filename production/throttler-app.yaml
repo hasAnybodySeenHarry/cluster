@@ -11,7 +11,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    repoURL: 'https://raw.githubusercontent.com/hasAnybodySeenHarry/helm-repository/production/'
+    repoURL: 'https://raw.githubusercontent.com/hasAnybodySeenHarry/debt-tracker-services/production/'
     chart: throttler
     targetRevision: '*'
     helm:
