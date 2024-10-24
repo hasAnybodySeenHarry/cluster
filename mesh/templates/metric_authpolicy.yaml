@@ -13,4 +13,5 @@ spec:
   - name: {{ . }}-metric-authn
     kind: MeshTLSAuthentication
     group: policy.linkerd.io
+---
 {{- end }}

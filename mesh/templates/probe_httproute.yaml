@@ -15,4 +15,5 @@ spec:
         value: "/v1/healthcheck"
         type: "Exact"
       method: GET
+---
 {{- end }}

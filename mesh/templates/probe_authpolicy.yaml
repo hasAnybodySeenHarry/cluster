@@ -13,4 +13,5 @@ spec:
   - name: {{ . }}-probe-authn
     kind: NetworkAuthentication
     group: policy.linkerd.io
+---
 {{- end }}

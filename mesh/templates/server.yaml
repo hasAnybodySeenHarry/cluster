@@ -9,4 +9,5 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ . }}
   port: http
+---
 {{- end }}

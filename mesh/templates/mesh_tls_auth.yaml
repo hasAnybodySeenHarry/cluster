@@ -7,4 +7,5 @@ metadata:
 spec:
   identities:
   - "prometheus-kube-prometheus-prometheus.monitoring.serviceaccount.identity.linkerd.cluster.local"
+---
 {{- end }}
