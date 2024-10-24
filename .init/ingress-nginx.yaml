@@ -15,6 +15,8 @@ spec:
       parameters:
       - name: controller.allowSnippetAnnotations
         value: "true"
+      - name: controller.podAnnotations.linkerd\.io/inject
+        value: "enabled"
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

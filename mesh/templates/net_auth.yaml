@@ -1,0 +1,11 @@
+{{- range .Values.apps }}
+apiVersion: policy.linkerd.io/v1alpha1
+kind: NetworkAuthentication
+metadata:
+  name: {{ . }}-probe-authn
+  namespace: default
+spec:
+  networks:
+  - cidr: 0.0.0.0/0
+  - cidr: ::/0
+{{- end }}

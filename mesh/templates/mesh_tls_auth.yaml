@@ -1,0 +1,10 @@
+{{- range .Values.apps }}
+apiVersion: policy.linkerd.io/v1alpha1
+kind: MeshTLSAuthentication
+metadata:
+  name: {{ . }}-metric-authn
+  namespace: default
+spec:
+  identities:
+  - "prometheus-kube-prometheus-prometheus.monitoring.serviceaccount.identity.linkerd.cluster.local"
+{{- end }}

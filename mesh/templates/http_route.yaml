@@ -1,0 +1,35 @@
+{{- range .Values.apps }}
+apiVersion: policy.linkerd.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ . }}-metric-route
+  namespace: default
+spec:
+  parentRefs:
+  - name: {{ . }}-server
+    kind: Server
+    group: policy.linkerd.io
+  rules:
+  - matches:
+    - path:
+        value: "/metrics"
+        type: "Exact"
+      method: GET
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ . }}-probe-route
+  namespace: default
+spec:
+  parentRefs:
+  - name: {{ . }}-server
+    kind: Server
+    group: policy.linkerd.io
+  rules:
+    - matches:
+      - path:
+          value: "/v1/healthcheck"
+          type: "Exact"
+        method: GET
+{{- end }}

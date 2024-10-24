@@ -1,0 +1,12 @@
+{{- range .Values.apps }}
+apiVersion: policy.linkerd.io/v1beta3
+kind: Server
+metadata:
+  name: {{ . }}-server
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ . }}
+  port: http
+{{- end }}
