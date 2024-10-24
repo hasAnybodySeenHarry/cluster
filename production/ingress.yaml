@@ -5,6 +5,7 @@ metadata:
   namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/service-upstream: "true"
     nginx.ingress.kubernetes.io/server-snippet: |
       access_by_lua_block {
         local http = require "resty.http"
