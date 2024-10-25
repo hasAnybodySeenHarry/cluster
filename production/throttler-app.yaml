@@ -22,3 +22,16 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: split.smi-spec.io/v1alpha2
+kind: TrafficSplit
+metadata:
+  name: throttler-split
+  namespace: default
+spec:
+  service: throttler
+  backends:
+  - service: throttler-v1
+    weight: 500
+  - service: throttler-v2
+    weight: 500

@@ -21,3 +21,16 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: split.smi-spec.io/v1alpha2
+kind: TrafficSplit
+metadata:
+  name: expenses-split
+  namespace: default
+spec:
+  service: expenses
+  backends:
+  - service: expenses-v1
+    weight: 500
+  - service: expenses-v2
+    weight: 500
