@@ -21,16 +21,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
----
-apiVersion: split.smi-spec.io/v1alpha2
-kind: TrafficSplit
-metadata:
-  name: mailer-split
-  namespace: default
-spec:
-  service: mailer
-  backends:
-  - service: mailer-active
-    weight: 500
-  - service: mailer-preview
-    weight: 500
