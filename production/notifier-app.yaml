@@ -30,7 +30,7 @@ metadata:
 spec:
   service: notifier
   backends:
-  - service: notifier-v1
+  - service: notifier-active
     weight: 500
-  - service: notifier-v2
+  - service: notifier-preview
     weight: 500

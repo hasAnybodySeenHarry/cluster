@@ -30,7 +30,7 @@ metadata:
 spec:
   service: mailer
   backends:
-  - service: mailer-v1
+  - service: mailer-active
     weight: 500
-  - service: mailer-v2
+  - service: mailer-preview
     weight: 500

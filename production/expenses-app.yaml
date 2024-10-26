@@ -30,7 +30,7 @@ metadata:
 spec:
   service: expenses
   backends:
-  - service: expenses-v1
+  - service: expenses-active
     weight: 500
-  - service: expenses-v2
+  - service: expenses-preview
     weight: 500

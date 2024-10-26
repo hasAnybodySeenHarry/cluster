@@ -31,7 +31,7 @@ metadata:
 spec:
   service: throttler
   backends:
-  - service: throttler-v1
+  - service: throttler-active
     weight: 500
-  - service: throttler-v2
+  - service: throttler-preview
     weight: 500
