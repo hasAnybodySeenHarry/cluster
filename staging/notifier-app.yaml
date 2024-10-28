@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: throttler
+  name: notifier
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
@@ -12,12 +12,11 @@ spec:
   project: default
   source:
     repoURL: 'https://raw.githubusercontent.com/hasAnybodySeenHarry/debt-tracker-services/production/'
-    chart: throttler
+    chart: notifier
     targetRevision: '*'
     helm:
       valueFiles:
       - values.yaml
-      # releaseName: prod-release
   syncPolicy:
     automated:
       prune: true
