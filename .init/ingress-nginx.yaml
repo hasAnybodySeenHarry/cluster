@@ -15,7 +15,7 @@ spec:
       parameters:
       - name: controller.allowSnippetAnnotations
         value: "true"
-      - name: controller.podAnnotations.linkerd\.io/inject
+      - name: controller.podAnnotations."linkerd\.io/inject"=enabled
         value: "enabled"
   destination:
     server: https://kubernetes.default.svc

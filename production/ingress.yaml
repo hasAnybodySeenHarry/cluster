@@ -78,4 +78,3 @@ spec:
               number: 8080
         path: /notifier/(.*)
         pathType: ImplementationSpecific
-      
