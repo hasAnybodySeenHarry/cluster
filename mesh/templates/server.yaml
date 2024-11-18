@@ -5,6 +5,7 @@ metadata:
   name: {{ . }}-server
   namespace: default
 spec:
+  accessPolicy: all-authenticated
   podSelector:
     matchLabels:
       app.kubernetes.io/name: {{ . }}
