@@ -10,7 +10,6 @@ spec:
     matchNames:
     - linkerd
     - linkerd-viz
-    - linkerd-jaeger
   podMetricsEndpoints:
   - interval: 10s
     relabelings:
