@@ -14,7 +14,7 @@ metadata:
         local httpc = http.new()
         httpc:set_timeout(5000)
 
-        local rate_limit_service_url = "http://throttler.default.svc.cluster.local:8080/v1/ratelimit"
+        local rate_limit_service_url = "http://throttler-active.default.svc.cluster.local:8080/v1/ratelimit"
 
         local function check_rate_limit()
             local authorization_header = ngx.req.get_headers()["Authorization"]
@@ -66,14 +66,14 @@ spec:
       paths:
       - backend:
           service:
-            name: expenses
+            name: expenses-active
             port:
               number: 8080
         path: /expenses/(.*)
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: notifier
+            name: notifier-active
             port:
               number: 8080
         path: /notifier/(.*)
