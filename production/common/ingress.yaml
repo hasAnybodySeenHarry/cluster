@@ -1,9 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: debt-tracker-ingress
+  name: flextrack-ingress
   namespace: default
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/acme-challenge-type: http01
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/service-upstream: "true"
     nginx.ingress.kubernetes.io/server-snippet: |
@@ -62,19 +64,24 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-  - http:
-      paths:
-      - backend:
-          service:
-            name: expenses-active
-            port:
-              number: 8080
-        path: /expenses/(.*)
-        pathType: ImplementationSpecific
-      - backend:
-          service:
-            name: notifier-active
-            port:
-              number: 8080
-        path: /notifier/(.*)
-        pathType: ImplementationSpecific
+    - host: some.uk
+      http:
+        paths:
+          - backend:
+              service:
+                name: expenses-active
+                port:
+                  number: 8080
+            path: /expenses/(.*)
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: notifier-active
+                port:
+                  number: 8080
+            path: /notifier/(.*)
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - some.uk
+      secretName: some-uk-tls

@@ -7,17 +7,15 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: default
-    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+    server: "https://kubernetes.default.svc"
   project: default
-  source:
-    repoURL: 'https://raw.githubusercontent.com/hasAnybodySeenHarry/debt-tracker-services/production/'
-    chart: throttler
-    targetRevision: '*'
+  repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
+    targetRevision: HEAD
+    path: production/throttler
     helm:
       valueFiles:
       - values.yaml
-      # releaseName: prod-release
   syncPolicy:
     automated:
       prune: true
