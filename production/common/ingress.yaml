@@ -64,7 +64,8 @@ metadata:
 spec:
   ingressClassName: "nginx"
   rules:
-    - http:
+    - host: some.uk
+      http:
         paths:
           - backend:
               service:
@@ -80,3 +81,7 @@ spec:
                   number: 8080
             path: /notifier/(.*)
             pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - some.uk
+      secretName: some-uk-tls
