@@ -11,11 +11,11 @@ spec:
     server: "https://kubernetes.default.svc"
   project: default
   repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
-    targetRevision: HEAD
-    path: production/throttler
-    helm:
-      valueFiles:
-      - values.yaml
+  targetRevision: HEAD
+  path: production/throttler
+  helm:
+    valueFiles:
+    - values.yaml
   syncPolicy:
     automated:
       prune: true
