@@ -12,10 +12,10 @@ spec:
   project: default
   source:
     repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
+    chart: throttler-infrastructure
     targetRevision: HEAD
     path: production/throttler
     helm:
-      chart: throttler-infrastructure
       valueFiles:
         - values.yaml
   syncPolicy:
