@@ -3,13 +3,6 @@ namespace: default
 nameOverride: ""
 fullnameOverride: ""
 
-analysis:
-  successRate:
-    interval: 3m
-    successCondition: result[0] >= 95
-    failureLimit: 3
-    count: 3
-
 livenessProbe:
   path: /v1/healthcheck
   port: 8080
