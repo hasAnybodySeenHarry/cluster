@@ -1,5 +1,8 @@
 namespace: default
 
+nameOverride: ""
+fullnameOverride: ""
+
 analysis:
   successRate:
     interval: 3m
