@@ -15,6 +15,7 @@ spec:
     targetRevision: HEAD
     path: production/throttler
     helm:
+      chart: throttler-infrastructure
       valueFiles:
         - values.yaml
   syncPolicy:
