@@ -91,5 +91,5 @@
 
 module "platform" {
   source  = "app.terraform.io/harryyan/pseudo/null"
-  version = "1.0.0"
+  version = "1.0.2"
 }
