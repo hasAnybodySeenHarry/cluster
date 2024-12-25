@@ -1,6 +1,8 @@
 name: Cluster CI
 on:
   push:
+    branches:
+    - '!main'
     paths:
     - "mesh/**"
     - "platform/**"
