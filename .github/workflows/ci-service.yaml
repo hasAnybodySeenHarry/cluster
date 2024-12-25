@@ -13,7 +13,7 @@ jobs:
   validate-helm:
     uses: hasAnybodySeenHarry/workflows/.github/workflows/validate-helm-chart.yaml@main
     with:
-      helm_version: ${{ env.HELM_VERSION }}
+      helm_version: $HELM_VERSION
       helm_folder: "mesh"
 
   validate-terraform:
