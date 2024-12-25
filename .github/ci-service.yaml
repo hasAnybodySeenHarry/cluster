@@ -1,0 +1,38 @@
+name: Cluster CI
+on:
+  push:
+    paths:
+    - "mesh/**"
+    - "platform/**"
+    - ".github/**"
+
+env:
+  HELM_VERSION: "v3.13.3"
+
+jobs:
+  validate-helm:
+    uses: hasAnybodySeenHarry/workflows/.github/workflows/validate-helm-chart.yaml@main
+    with:
+      helm_version: ${{ env.HELM_VERSION }}
+      helm_folder: "mesh"
+
+  validate-terraform:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.10.2"
+    
+    - name: Validate Terraform
+      working-directory: platform/
+      run: |
+        terraform init && terraform validate
+
+    - name: Plan Terraform
+      working-directory: platform/
+      run: |
+        terraform plan
