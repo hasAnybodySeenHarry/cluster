@@ -7,13 +7,13 @@ on:
     - ".github/**"
 
 env:
-  HELM_VERSION: "v3.13.3"
+  HELM_VERSION: "3.13.3"
 
 jobs:
   validate-helm:
     uses: hasAnybodySeenHarry/workflows/.github/workflows/validate-helm-chart.yaml@main
     with:
-      helm_version: $HELM_VERSION
+      helm_version: "$HELM_VERSION"
       helm_folder: "mesh"
 
   validate-terraform:
