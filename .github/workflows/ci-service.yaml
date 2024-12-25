@@ -26,6 +26,7 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: "1.10.2"
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
     
     - name: Validate Terraform
       working-directory: platform/
