@@ -4,7 +4,7 @@ metadata:
   name: {{ include "app.fullname" . }}-server
   namespace: {{ .Values.namespace }}
 spec:
-  accessPolicy: all-authenticated
+  # accessPolicy: all-authenticated
   podSelector:
     matchLabels:
       app.kubernetes.io/name: {{ include "app.fullname" . }}
