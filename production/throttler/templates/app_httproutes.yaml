@@ -11,6 +11,10 @@ spec:
   rules:
   - matches:
     - path:
-        value: "/v1/ratelimit"
-        type: "Exact"
+        value: "/v1/*"
+        type: "Prefix"
       method: GET
+    # - path:
+    #     value: "/v1/ratelimit"
+    #     type: "Exact"
+    #   method: GET
