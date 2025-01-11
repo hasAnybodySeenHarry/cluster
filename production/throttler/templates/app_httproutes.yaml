@@ -11,7 +11,7 @@ spec:
   rules:
   - matches:
     - path:
-        value: "/v1/*"
+        value: "/v1/"
         type: "PathPrefix"
       method: GET
     # - path:
