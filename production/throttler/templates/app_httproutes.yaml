@@ -12,7 +12,7 @@ spec:
   - matches:
     - path:
         value: "/v1/*"
-        type: "PathPrefix"
+        type: "Exact"
       method: GET
     # - path:
     #     value: "/v1/ratelimit"
