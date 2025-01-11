@@ -1,7 +1,7 @@
 namespace: default
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "throttler"
 
 livenessProbe:
   path: /v1/healthcheck
