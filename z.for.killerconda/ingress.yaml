@@ -61,6 +61,10 @@ metadata:
       }
 spec:
   ingressClassName: "nginx"
+  tls:
+  - hosts:
+    - "*.spca.r.killercoda.com"
+    secretName: nginx-tls-secret
   rules:
   - http:
       paths:
