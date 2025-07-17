@@ -113,10 +113,14 @@ resource "kubectl_manifest" "cluster_issuer" {
   ]
 }
 
+resource "kubectl_manifest" "issuer" {
+  yaml_body = file("${path.module}/issuer.yaml")
+}
+
 resource "kubectl_manifest" "certificate" {
   yaml_body = file("${path.module}/certificate.yaml")
 
   depends_on = [
-    kubectl_manifest.cluster_issuer
+    kubectl_manifest.issuer
   ]
 }
