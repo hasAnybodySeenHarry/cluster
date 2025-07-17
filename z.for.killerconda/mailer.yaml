@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mailer
+  name: mailer-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailer
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: mailer
+    spec:
+      containers:
+      - image: xidepid640/mailer:v1.0.0
+        name: app-container
+        ports:
+        - containerPort: 8080
+        resources: {}
+        env:
+        - name: AMQP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: amqp-secret
+              key: username
+        - name: AMQP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: amqp-secret
+              key: password
+        - name: AMQP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: amqp-secret
+              key: host
+        - name: AMQP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: amqp-secret
+              key: port
+        - name: MAIL_API_KEY
+          value: some-key
+        - name: MAIL_DOMAIN
+          value: some-domain
+        - name: ENV
+          value: development
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mailer
+  name: mailer-app
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: mailer
+  type: ClusterIP

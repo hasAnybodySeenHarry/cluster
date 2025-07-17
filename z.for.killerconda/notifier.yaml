@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: throttler
-  name: throttler-app
+    app: notifier
+  name: notifier-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: throttler
+      app: notifier
   strategy: {}
   template:
     metadata:
       labels:
-        app: throttler
+        app: notifier
     spec:
       containers:
-      - image: xidepid640/throttler:v1.0.0
+      - image: xidepid640/notifier:v1.0.0
         name: app-container
         ports:
         - containerPort: 8080
@@ -38,6 +38,41 @@ spec:
           value: ""
         - name: PORT
           value: "8080"
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: username
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: password
+        - name: MONGO_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: host
+        - name: MONGO_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: port
+        - name: MONGO_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: database
+        - name: PUB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: pubsub-secret
+              key: host
+        - name: PUB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: pubsub-secret
+              key: port
         - name: REDIS_ADDR
           valueFrom:
             secretKeyRef:
@@ -53,8 +88,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: throttler
-  name: throttler-app
+    app: notifier
+  name: notifier-app
 spec:
   ports:
   - name: http
@@ -62,5 +97,5 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app: throttler
+    app: notifier
   type: ClusterIP
