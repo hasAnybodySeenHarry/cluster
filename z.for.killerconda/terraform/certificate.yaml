@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: default
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nginx-tls
+  namespace: default
+spec:
+  secretName: nginx-tls-secret
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+  commonName: "*.spca.r.killercoda.com"
+  dnsNames:
+  - "*.spca.r.killercoda.com"
+  duration: 8760h
+  renewBefore: 360h

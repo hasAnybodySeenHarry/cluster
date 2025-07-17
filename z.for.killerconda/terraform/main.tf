@@ -19,7 +19,7 @@ provider "helm" {
 
 provider "kubectl" {
   load_config_file = true
-  config_path = "~/.kube/config"
+  config_path      = "~/.kube/config"
 }
 
 locals {
@@ -30,10 +30,10 @@ locals {
 
 // nginx helm release
 resource "helm_release" "nginx" {
-  namespace = "ingress-nginx"
+  namespace        = "ingress-nginx"
   create_namespace = true
 
-  name = "ingress-nginx"
+  name  = "ingress-nginx"
   chart = "ingress-nginx"
 
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -54,14 +54,18 @@ resource "helm_release" "nginx" {
       }
     })
   ]
+
+  depends_on = [
+    kubectl_manifest.certificate
+  ]
 }
 
 // argocd helm release
 resource "helm_release" "argocd" {
-  namespace = "argocd"
+  namespace        = "argocd"
   create_namespace = true
 
-  name = "argocd"
+  name  = "argocd"
   chart = "argo-cd"
 
   repository = "https://argoproj.github.io/argo-helm"
@@ -80,5 +84,39 @@ resource "kubectl_manifest" "argocd_applications" {
 
   depends_on = [
     helm_release.argocd
+  ]
+}
+
+// cert-manager helm release
+resource "helm_release" "cert_manager" {
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  name  = "cert-manager"
+  chart = "cert-manager"
+
+  repository = "https://charts.jetstack.io"
+
+  version = "v1.12.3"
+
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+}
+
+resource "kubectl_manifest" "cluster_issuer" {
+  yaml_body = file("${path.module}/clusterissuer-nginx.yaml")
+
+  depends_on = [
+    helm_release.cert_manager
+  ]
+}
+
+resource "kubectl_manifest" "certificate" {
+  yaml_body = file("${path.module}/certificate.yaml")
+
+  depends_on = [
+    kubectl_manifest.cluster_issuer
   ]
 }
