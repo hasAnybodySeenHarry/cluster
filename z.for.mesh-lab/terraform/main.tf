@@ -8,6 +8,10 @@ terraform {
       source  = "gavinbunney/kubectl"
       version = "~> 1.14.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.6"
+    }
   }
 }
 
@@ -26,6 +30,89 @@ locals {
   argocd_apps = {
     for app in var.argocd_apps : app.app-name => app
   }
+}
+
+// linkerd helm release
+resource "tls_private_key" "ca" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
+}
+
+resource "tls_self_signed_cert" "ca" {
+  private_key_pem       = tls_private_key.ca.private_key_pem
+  is_ca_certificate     = true
+  set_subject_key_id    = true
+  validity_period_hours = 87600
+  allowed_uses = [
+    "cert_signing",
+    "crl_signing"
+  ]
+  subject {
+    common_name = "root.linkerd.cluster.local"
+  }
+}
+
+resource "tls_private_key" "issuer" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
+}
+
+resource "tls_cert_request" "issuer" {
+  private_key_pem = tls_private_key.issuer.private_key_pem
+  subject {
+    common_name = "identity.linkerd.cluster.local"
+  }
+}
+
+resource "tls_locally_signed_cert" "issuer" {
+  cert_request_pem      = tls_cert_request.issuer.cert_request_pem
+  ca_private_key_pem    = tls_private_key.ca.private_key_pem
+  ca_cert_pem           = tls_self_signed_cert.ca.cert_pem
+  is_ca_certificate     = true
+  set_subject_key_id    = true
+  validity_period_hours = 8760
+  allowed_uses = [
+    "cert_signing",
+    "crl_signing"
+  ]
+}
+
+resource "helm_release" "linkerd" {
+  name             = "linkerd"
+  namespace        = helm_release.linkerd_crds.namespace
+  repository       = "https://helm.linkerd.io/stable"
+  chart            = "linkerd2"
+  version          = "2.11.5"
+  create_namespace = false
+
+  set {
+    name  = "identityTrustAnchorsPEM"
+    value = tls_locally_signed_cert.issuer.ca_cert_pem
+  }
+
+  set {
+    name  = "identity.issuer.tls.crtPEM"
+    value = tls_locally_signed_cert.issuer.cert_pem
+  }
+
+  set {
+    name  = "identity.issuer.tls.keyPEM"
+    value = tls_private_key.issuer.private_key_pem
+  }
+
+  depends_on = [
+    helm_release.linkerd_crds
+  ]
+}
+
+resource "helm_release" "linkerd_crds" {
+  namespace        = "linkerd"
+  create_namespace = true
+
+  name  = "linkerd-crds"
+  chart = "linkerd-crds"
+
+  repository = "https://helm.linkerd.io/edge"
 }
 
 // nginx helm release
@@ -53,6 +140,10 @@ resource "helm_release" "nginx" {
         }
       }
     })
+  ]
+
+  depends_on = [ 
+    helm_release.linkerd 
   ]
 }
 
