@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  host: cG9zdGdyZXMtZGF0YWJhc2U=
+  maxIdleConn: MzA=
+  maxOpenConn: MzA=
+  name: ZXhwZW5zZXM=
+  password: cGFzc3dvcmQ=
+  port: NTQzMg==
+  username: aGFycnk=
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-setup-job
+spec:
+  ttlSecondsAfterFinished: 180
+  template:
+    spec:
+      containers:
+      - name: setup
+        image: alpine:latest
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: username
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: host
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: port
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: name
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Installing necessary tools..."
+          apk add --no-cache git wget postgresql-client
+
+          echo "Installing go-migrate..."
+          wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz
+          tar -xzf migrate.linux-amd64.tar.gz
+          mv migrate.linux-amd64 /usr/local/bin/migrate
+
+          echo "Waiting for PostgreSQL to be ready..."
+          until psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME -c '\q'; do
+            sleep 2
+          done
+
+          echo "PostgreSQL is ready."
+
+          echo "Installing extensions..."
+          psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME <<EOF
+          CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+          CREATE EXTENSION IF NOT EXISTS "citext";
+          EOF
+
+          echo "Extensions installed."
+
+          echo "Cloning repository for migrations..."
+          git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
+
+          echo "Running migrations..."
+          migrate -path /migrations/migrations -database "postgres://$DB_USERNAME:$PGPASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable" up
+
+          echo "Migrations applied."
+      restartPolicy: Never
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-database
+  labels:
+    app: postgres
+spec:
+  containers:
+  - name: postgres-container
+    image: postgres:alpine
+    ports:
+    - containerPort: 5432
+    env:
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: username
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: password
+    - name: POSTGRES_DB
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres

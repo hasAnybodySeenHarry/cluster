@@ -68,6 +68,6 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: throttler-app
+            name: expenses-app
             port:
               number: 8080

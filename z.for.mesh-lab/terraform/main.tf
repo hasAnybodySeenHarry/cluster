@@ -100,10 +100,10 @@ resource "helm_release" "linkerd" {
     value = tls_private_key.issuer.private_key_pem
   }
 
-  set {
-    name  = "proxy.logLevel"
-    value = "info,linkerd=debug,trust_dns=error"
-  }
+  # set {
+  #   name  = "proxy.logLevel"
+  #   value = "info,linkerd=debug,trust_dns=error"
+  # }
 
   depends_on = [
     helm_release.linkerd_crds
@@ -122,36 +122,36 @@ resource "helm_release" "linkerd_crds" {
 }
 
 // nginx helm release
-resource "helm_release" "nginx" {
-  namespace        = "ingress-nginx"
-  create_namespace = true
+# resource "helm_release" "nginx" {
+#   namespace        = "ingress-nginx"
+#   create_namespace = true
 
-  name  = "ingress-nginx"
-  chart = "ingress-nginx"
+#   name  = "ingress-nginx"
+#   chart = "ingress-nginx"
 
-  repository = "https://kubernetes.github.io/ingress-nginx"
+#   repository = "https://kubernetes.github.io/ingress-nginx"
 
-  values = [
-    yamlencode({
-      controller = {
-        allowSnippetAnnotations = "true"
-        service = {
-          type = "NodePort"
-        }
-        podAnnotations = {
-          "linkerd.io/inject" = "enabled"
-        }
-        config = {
-          annotations-risk-level = "Critical"
-        }
-      }
-    })
-  ]
+#   values = [
+#     yamlencode({
+#       controller = {
+#         allowSnippetAnnotations = "true"
+#         service = {
+#           type = "NodePort"
+#         }
+#         podAnnotations = {
+#           "linkerd.io/inject" = "enabled"
+#         }
+#         config = {
+#           annotations-risk-level = "Critical"
+#         }
+#       }
+#     })
+#   ]
 
-  depends_on = [
-    helm_release.linkerd
-  ]
-}
+#   depends_on = [
+#     helm_release.linkerd
+#   ]
+# }
 
 // argocd helm release
 resource "helm_release" "argocd" {
