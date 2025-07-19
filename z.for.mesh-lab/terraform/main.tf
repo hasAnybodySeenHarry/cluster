@@ -82,7 +82,7 @@ resource "helm_release" "linkerd" {
   namespace        = helm_release.linkerd_crds.namespace
   repository       = "https://helm.linkerd.io/stable"
   chart            = "linkerd2"
-  version          = "2.11.5"
+  version          = "2.12.0"
   create_namespace = false
 
   set {
