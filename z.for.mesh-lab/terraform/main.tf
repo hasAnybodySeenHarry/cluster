@@ -78,11 +78,11 @@ resource "tls_locally_signed_cert" "issuer" {
 }
 
 resource "helm_release" "linkerd" {
-  name             = "linkerd"
+  name             = "linkerd-control-plane"
   namespace        = helm_release.linkerd_crds.namespace
   repository       = "https://helm.linkerd.io/stable"
-  chart            = "linkerd2"
-  version          = "2.12.0"
+  chart            = "linkerd-control-plane"
+  version          = "1.16.11"
   create_namespace = false
 
   set {
@@ -100,6 +100,11 @@ resource "helm_release" "linkerd" {
     value = tls_private_key.issuer.private_key_pem
   }
 
+  set {
+    name  = "proxy.logLevel"
+    value = "trace,linkerd=trace,trust_dns=trace"
+  }
+
   depends_on = [
     helm_release.linkerd_crds
   ]
@@ -109,10 +114,11 @@ resource "helm_release" "linkerd_crds" {
   namespace        = "linkerd"
   create_namespace = true
 
-  name  = "linkerd-crds"
-  chart = "linkerd-crds"
+  name    = "linkerd-crds"
+  chart   = "linkerd-crds"
+  version = "1.8.0"
 
-  repository = "https://helm.linkerd.io/edge"
+  repository = "https://helm.linkerd.io/stable"
 }
 
 // nginx helm release
@@ -142,8 +148,8 @@ resource "helm_release" "nginx" {
     })
   ]
 
-  depends_on = [ 
-    helm_release.linkerd 
+  depends_on = [
+    helm_release.linkerd
   ]
 }
 
@@ -156,6 +162,10 @@ resource "helm_release" "argocd" {
   chart = "argo-cd"
 
   repository = "https://argoproj.github.io/argo-helm"
+
+  depends_on = [
+    helm_release.linkerd
+  ]
 }
 
 resource "kubectl_manifest" "argocd_applications" {
