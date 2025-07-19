@@ -35,7 +35,7 @@ spec:
             port: 8080
         env:
         - name: GRPC_ADDR
-          value: ""
+          value: "expenses-app"
         - name: PORT
           value: "8080"
         - name: REDIS_ADDR
