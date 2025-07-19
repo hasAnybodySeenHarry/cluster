@@ -102,7 +102,7 @@ resource "helm_release" "linkerd" {
 
   set {
     name  = "proxy.logLevel"
-    value = "debug,linkerd=info,trust_dns=error"
+    value = "info,linkerd=debug,trust_dns=error"
   }
 
   depends_on = [
