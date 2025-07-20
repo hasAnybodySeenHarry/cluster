@@ -116,42 +116,10 @@ resource "helm_release" "linkerd_crds" {
 
   name    = "linkerd-crds"
   chart   = "linkerd-crds"
-  version = "1.8.0"
+  version = "2025.7.4"
 
-  repository = "https://helm.linkerd.io/stable"
+  repository = "https://helm.linkerd.io/edge"
 }
-
-// nginx helm release
-# resource "helm_release" "nginx" {
-#   namespace        = "ingress-nginx"
-#   create_namespace = true
-
-#   name  = "ingress-nginx"
-#   chart = "ingress-nginx"
-
-#   repository = "https://kubernetes.github.io/ingress-nginx"
-
-#   values = [
-#     yamlencode({
-#       controller = {
-#         allowSnippetAnnotations = "true"
-#         service = {
-#           type = "NodePort"
-#         }
-#         podAnnotations = {
-#           "linkerd.io/inject" = "enabled"
-#         }
-#         config = {
-#           annotations-risk-level = "Critical"
-#         }
-#       }
-#     })
-#   ]
-
-#   depends_on = [
-#     helm_release.linkerd
-#   ]
-# }
 
 // argocd helm release
 resource "helm_release" "argocd" {
