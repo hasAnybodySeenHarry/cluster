@@ -20,6 +20,7 @@ spec:
         name: app-container
         ports:
         - containerPort: 8080
+          name: http
         resources: {}
         readinessProbe:
           httpGet:
