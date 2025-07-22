@@ -121,7 +121,6 @@ resource "helm_release" "linkerd_crds" {
   repository = "https://helm.linkerd.io/edge"
 }
 
-// argocd helm release
 resource "helm_release" "argocd" {
   namespace        = "argocd"
   create_namespace = true
