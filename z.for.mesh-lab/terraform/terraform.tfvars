@@ -7,3 +7,5 @@ argocd_apps = [
     server-url      = "https://kubernetes.default.svc"
   },
 ]
+
+inject_mesh = true
