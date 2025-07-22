@@ -80,9 +80,9 @@ resource "tls_locally_signed_cert" "issuer" {
 resource "helm_release" "linkerd" {
   name             = "linkerd-control-plane"
   namespace        = helm_release.linkerd_crds.namespace
-  repository       = "https://helm.linkerd.io/stable"
+  repository       = "https://helm.linkerd.io/edge"
   chart            = "linkerd-control-plane"
-  version          = "1.16.11"
+  version          = "2025.7.4"
   create_namespace = false
 
   set {
@@ -100,10 +100,10 @@ resource "helm_release" "linkerd" {
     value = tls_private_key.issuer.private_key_pem
   }
 
-  # set {
-  #   name  = "proxy.logLevel"
-  #   value = "debug,linkerd=debug,trust_dns=error"
-  # }
+  set {
+    name  = "proxy.logLevel"
+    value = "error"
+  }
 
   depends_on = [
     helm_release.linkerd_crds
