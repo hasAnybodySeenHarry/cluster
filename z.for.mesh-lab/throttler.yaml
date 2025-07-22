@@ -54,7 +54,7 @@ kind: Service
 metadata:
   labels:
     app: throttler
-  name: throttler-app
+  name: throttler-app-service
 spec:
   ports:
   - name: http
