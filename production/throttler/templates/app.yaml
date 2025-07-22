@@ -16,7 +16,7 @@ spec:
     targetRevision: "*"
     helm:
       valueFiles:
-        - values.yaml
+      - values.yaml
       # releaseName: prod-release
   syncPolicy:
     automated:

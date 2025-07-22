@@ -1,4 +1,4 @@
-apiVersion: policy.linkerd.io/v1beta3
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: {{ include "app.fullname" . }}-app-route
@@ -8,13 +8,18 @@ spec:
   - name: {{ include "app.fullname" . }}-server
     kind: Server
     group: policy.linkerd.io
+  # we need to find a way to obtain the service's name and port
+  - name: {{ include "app.fullname" . }}-active
+    kind: Service
+    group: core
+    port: {{ .Values.service.port }}
+  - name: {{ include "app.fullname" . }}-preview
+    kind: Service
+    group: core
+    port: {{ .Values.service.port }}
   rules:
   - matches:
     - path:
         value: "/v1/"
         type: "PathPrefix"
       method: GET
-    # - path:
-    #     value: "/v1/ratelimit"
-    #     type: "Exact"
-    #   method: GET

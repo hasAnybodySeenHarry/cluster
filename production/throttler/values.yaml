@@ -3,6 +3,9 @@ namespace: default
 nameOverride: ""
 fullnameOverride: "throttler"
 
+service:
+  name: "throttler"
+  port: 8080
+
 livenessProbe:
   path: /v1/healthcheck
-  port: 8080

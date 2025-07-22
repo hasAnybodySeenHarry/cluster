@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   targetRef:
-    group: policy.linkerd.io
+    group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: {{ include "app.fullname" . }}-metric-route
   requiredAuthenticationRefs:
