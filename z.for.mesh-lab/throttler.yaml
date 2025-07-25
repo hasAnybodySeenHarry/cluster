@@ -16,7 +16,7 @@ spec:
         app: throttler
     spec:
       containers:
-      - image: xidepid640/throttler:v1.0.0
+      - image: xidepid640/throttler:v2.0.0
         name: app-container
         ports:
         - containerPort: 8080
