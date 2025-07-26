@@ -50,6 +50,8 @@ resource "helm_release" "linkerd" {
   version          = "2025.7.4"
   create_namespace = false
 
+  atomic = true
+
   set {
     name  = "identityTrustAnchorsPEM"
     value = tls_locally_signed_cert.issuer.ca_cert_pem
@@ -70,6 +72,11 @@ resource "helm_release" "linkerd" {
     value = "error"
   }
 
+  set {
+    name  = "proxy.nativeSidecar"
+    value = false
+  }
+
   depends_on = [
     helm_release.linkerd_crds
   ]
@@ -84,4 +91,6 @@ resource "helm_release" "linkerd_crds" {
   version = "2025.7.4"
 
   repository = "https://helm.linkerd.io/edge"
+
+  atomic = true
 }

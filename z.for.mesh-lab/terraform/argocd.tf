@@ -7,6 +7,8 @@ resource "helm_release" "argocd" {
 
   repository = "https://argoproj.github.io/argo-helm"
 
+  atomic = true
+
   depends_on = [
     helm_release.linkerd
   ]
