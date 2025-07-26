@@ -81,7 +81,7 @@ spec:
             git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
 
             echo "Running migrations..."
-            migrate -path /migrations/migrations -database \"postgres://$DB_USERNAME:$PGPASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable\" up
+            migrate -path /migrations/migrations -database "postgres://${DB_USERNAME}:${PGPASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" up
 
             echo "Migrations applied."
           '
