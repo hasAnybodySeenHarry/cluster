@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: setup
-        image: ghcr.io/linkerd/linkerd-await:stable-2.13.4
+        image: alpine:latest
         env:
         - name: PGPASSWORD
           valueFrom:
@@ -50,12 +50,10 @@ spec:
               name: db-secret
               key: name
         command:
-        - linkerd-await
-        - -S
         - /bin/sh
         - -c
         - |
-          echo "Installing necessary tools..."
+          echo "Installing tools..."
           apk add --no-cache git wget postgresql-client
 
           echo "Installing go-migrate..."
@@ -63,28 +61,33 @@ spec:
           tar -xzf migrate.linux-amd64.tar.gz
           mv migrate.linux-amd64 /usr/local/bin/migrate
 
-          echo "Waiting for PostgreSQL to be ready..."
-          until psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME -c '\q'; do
-            sleep 2
-          done
+          echo "Installing linkerd-await..."
+          curl -sSLo /usr/local/bin/linkerd-await https://github.com/linkerd/linkerd-await/releases/download/release%2Fv0.3.0/linkerd-await-v0.3.0-amd64
+          chmod +x /usr/local/bin/linkerd-await
 
-          echo "PostgreSQL is ready."
+          echo "Running setup with linkerd-await..."
+          linkerd-await --shutdown -- /bin/sh -c '
+            echo "Waiting for PostgreSQL to be ready..."
+            until psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME -c "\q"; do
+              sleep 2
+            done
 
-          echo "Installing extensions..."
-          psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME <<EOF
-          CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-          CREATE EXTENSION IF NOT EXISTS "citext";
-          EOF
+            echo "PostgreSQL is ready."
 
-          echo "Extensions installed."
+            echo "Installing extensions..."
+            psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME <<EOF
+            CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
+            CREATE EXTENSION IF NOT EXISTS \"citext\";
+            EOF
 
-          echo "Cloning repository for migrations..."
-          git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
+            echo "Cloning repository for migrations..."
+            git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
 
-          echo "Running migrations..."
-          migrate -path /migrations/migrations -database "postgres://$DB_USERNAME:$PGPASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable" up
+            echo "Running migrations..."
+            migrate -path /migrations/migrations -database \"postgres://$DB_USERNAME:$PGPASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable\" up
 
-          echo "Migrations applied."
+            echo "Migrations applied."
+          '
       restartPolicy: Never
 ---
 apiVersion: v1
