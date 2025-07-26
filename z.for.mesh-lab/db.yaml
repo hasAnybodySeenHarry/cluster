@@ -85,6 +85,9 @@ spec:
 
             echo "Migrations applied."
           '
+
+          echo "Setup complete"
+          exit 0
       restartPolicy: Never
 ---
 apiVersion: v1
