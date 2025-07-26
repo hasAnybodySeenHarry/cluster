@@ -77,6 +77,11 @@ resource "helm_release" "linkerd" {
     value = false
   }
 
+  set {
+    name  = "proxy.enableShutdownEndpoint"
+    value = true
+  }
+
   depends_on = [
     helm_release.linkerd_crds
   ]
