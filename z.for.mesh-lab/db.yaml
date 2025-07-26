@@ -75,10 +75,7 @@ spec:
             echo "PostgreSQL is ready."
 
             echo "Installing extensions..."
-            psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME <<EOF
-            CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
-            CREATE EXTENSION IF NOT EXISTS \"citext\";
-            EOF
+            echo "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; CREATE EXTENSION IF NOT EXISTS \"citext\";" | psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME
 
             echo "Cloning repository for migrations..."
             git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
