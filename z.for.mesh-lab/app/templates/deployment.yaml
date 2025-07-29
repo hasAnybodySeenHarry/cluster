@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+  name: {{ include "app.fullname" . }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: 4
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "app.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Chart.Name }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: http
+          protocol: TCP
+        resources: {{ .Values.resources }}
+        securityContext: {{ .Values.securityContext }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.path | default "/" }}
+            port: {{ .Values.readinessProbe.port | default "http" }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.path | default "/" }}
+            port: {{ .Values.livenessProbe.port | default "http" }}
+        startupProbe:
+          httpGet:
+            path: {{ .Values.startupProbe.path | default "/" }}
+            port: {{ .Values.startupProbe.port | default "http" }}
+        env:
+          {{- toYaml .Values.env | nindent 8 }}
