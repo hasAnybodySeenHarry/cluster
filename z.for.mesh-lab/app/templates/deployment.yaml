@@ -34,8 +34,10 @@ spec:
         - containerPort: {{ .Values.service.port }}
           name: http
           protocol: TCP
-        resources: {{ .Values.resources }}
-        securityContext: {{ .Values.securityContext }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        securityContext: 
+          {{- toYaml .Values.securityContext | nindent 10 }}
         readinessProbe:
           httpGet:
             path: {{ .Values.readinessProbe.path | default "/" }}
