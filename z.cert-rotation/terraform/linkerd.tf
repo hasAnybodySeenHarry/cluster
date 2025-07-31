@@ -9,6 +9,46 @@ resource "kubernetes_namespace" "linkerd" {
   }
 }
 
+resource "kubernetes_role" "cert_manager_secret_creator" {
+  metadata {
+    name      = "cert-manager-secret-creator"
+    namespace = local.linkerd_ns
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["secrets"]
+    verbs      = ["create", "get", "update", "patch"]
+  }
+
+  depends_on = [ 
+    kubernetes_namespace.linkerd 
+  ]
+}
+
+resource "kubernetes_role_binding" "cert_manager_secret_creator_binding" {
+  metadata {
+    name      = "cert-manager-secret-creator-binding"
+    namespace = local.linkerd_ns
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Role"
+    name      = "cert-manager-secret-creator"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "cert-manager"
+    namespace = local.cert_manager_ns
+  }
+
+  depends_on = [ 
+    kubernetes_namespace.linkerd 
+  ]
+}
+
 resource "helm_release" "cert_manager" {
   namespace        = local.cert_manager_ns
   create_namespace = true
@@ -22,6 +62,10 @@ resource "helm_release" "cert_manager" {
     name  = "crds.enabled"
     value = "true"
   }
+
+  depends_on = [ 
+    kubernetes_namespace.linkerd
+  ]
 }
 
 resource "helm_release" "trust_manager" {
@@ -43,38 +87,6 @@ resource "helm_release" "trust_manager" {
   depends_on = [
     helm_release.cert_manager
   ]
-}
-
-resource "kubernetes_role" "cert_manager_secret_creator" {
-  metadata {
-    name      = "cert-manager-secret-creator"
-    namespace = local.linkerd_ns
-  }
-
-  rule {
-    api_groups = [""]
-    resources  = ["secrets"]
-    verbs      = ["create", "get", "update", "patch"]
-  }
-}
-
-resource "kubernetes_role_binding" "cert_manager_secret_creator_binding" {
-  metadata {
-    name      = "cert-manager-secret-creator-binding"
-    namespace = local.linkerd_ns
-  }
-
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "Role"
-    name      = "cert-manager-secret-creator"
-  }
-
-  subject {
-    kind      = "ServiceAccount"
-    name      = "cert-manager"
-    namespace = local.cert_manager_ns
-  }
 }
 
 resource "kubectl_manifest" "linkerd_trust_root_issuer" {
