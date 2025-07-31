@@ -25,6 +25,7 @@ resource "kubectl_manifest" "trust_bundle" {
 
   depends_on = [
     kubectl_manifest.linkerd_trust_anchor,
-    null_resource.linkerd_previous_anchor
+    null_resource.linkerd_previous_anchor,
+    helm_release.trust_manager
   ]
 }
