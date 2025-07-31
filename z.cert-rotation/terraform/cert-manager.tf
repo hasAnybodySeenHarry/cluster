@@ -78,11 +78,28 @@ resource "kubectl_manifest" "linkerd_trust_anchor" {
 resource "null_resource" "linkerd_previous_anchor" {
   provisioner "local-exec" {
     command = <<-EOT
-      kubectl get secret -n cert-manager linkerd-trust-anchor -o yaml \
-        | sed -e s/linkerd-trust-anchor/linkerd-previous-anchor/ \
-        | egrep -v '^  *(resourceVersion|uid)' \
-        | kubectl apply -f -
+      #!/bin/bash
+      set -e
+
+      for i in {1..5}; do
+        echo "Attempt $i: Trying to duplicate linkerd-trust-anchor secret"
+
+        if kubectl get secret -n cert-manager linkerd-trust-anchor -o yaml \
+          | sed -e s/linkerd-trust-anchor/linkerd-previous-anchor/ \
+          | egrep -v '^  *(resourceVersion|uid)' \
+          | kubectl apply -f -; then
+          echo "Successfully created linkerd-previous-anchor"
+          exit 0
+        else
+          echo "Attempt $i failed. Retrying in 5 seconds."
+          sleep 5
+        fi
+      done
+
+      echo "All retry attempts failed."
+      exit 1
     EOT
+    interpreter = ["/bin/bash", "-c"]
   }
 
   depends_on = [
