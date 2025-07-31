@@ -60,7 +60,7 @@ resource "kubernetes_role" "cert-manager-secret-creator" {
 
 resource "kubernetes_role_binding" "cert-manager-secret-creator-binding" {
   metadata {
-    name = "cert-manager-secret-creator-binding"
+    name      = "cert-manager-secret-creator-binding"
     namespace = local.linkerd_ns
   }
 
@@ -75,4 +75,20 @@ resource "kubernetes_role_binding" "cert-manager-secret-creator-binding" {
     name      = "cert-manager"
     namespace = local.cert_manager_ns
   }
+}
+
+resource "kubectl_manifest" "linkerd-trust-root-issuer" {
+  yaml_body = file("${path.module}/certificates/trust_root_issuer.yaml")
+
+  depends_on = [
+    helm_release.cert_manager
+  ]
+}
+
+resource "kubectl_manifest" "linkerd-trust-anchor-cert" {
+  yaml_body = file("${path.module}/certificates/trust_anchor.yaml")
+
+  depends_on = [
+    kubectl_manifest.linkerd-trust-root-issuer
+  ]
 }
