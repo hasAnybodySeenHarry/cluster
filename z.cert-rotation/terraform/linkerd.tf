@@ -24,7 +24,7 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-resource "helm_release" "trust-manager" {
+resource "helm_release" "trust_manager" {
   namespace        = local.cert_manager_ns
   create_namespace = false
 
@@ -45,7 +45,7 @@ resource "helm_release" "trust-manager" {
   ]
 }
 
-resource "kubernetes_role" "cert-manager-secret-creator" {
+resource "kubernetes_role" "cert_manager_secret_creator" {
   metadata {
     name      = "cert-manager-secret-creator"
     namespace = local.linkerd_ns
@@ -58,7 +58,7 @@ resource "kubernetes_role" "cert-manager-secret-creator" {
   }
 }
 
-resource "kubernetes_role_binding" "cert-manager-secret-creator-binding" {
+resource "kubernetes_role_binding" "cert_manager_secret_creator_binding" {
   metadata {
     name      = "cert-manager-secret-creator-binding"
     namespace = local.linkerd_ns
@@ -77,7 +77,7 @@ resource "kubernetes_role_binding" "cert-manager-secret-creator-binding" {
   }
 }
 
-resource "kubectl_manifest" "linkerd-trust-root-issuer" {
+resource "kubectl_manifest" "linkerd_trust_root_issuer" {
   yaml_body = file("${path.module}/certificates/trust_root_issuer.yaml")
 
   depends_on = [
@@ -85,10 +85,26 @@ resource "kubectl_manifest" "linkerd-trust-root-issuer" {
   ]
 }
 
-resource "kubectl_manifest" "linkerd-trust-anchor-cert" {
+resource "kubectl_manifest" "linkerd_trust_anchor" {
   yaml_body = file("${path.module}/certificates/trust_anchor.yaml")
 
   depends_on = [
-    kubectl_manifest.linkerd-trust-root-issuer
+    kubectl_manifest.linkerd_trust_root_issuer
+  ]
+}
+
+resource "kubectl_manifest" "linkerd_identity_issuer_issuer" {
+  yaml_body = file("${path.module}/certificates/identity_issuer_issuer.yaml")
+
+  depends_on = [
+    helm_release.cert_manager
+  ]
+}
+
+resource "kubectl_manifest" "linkerd_identity_issuer" {
+  yaml_body = file("${path.module}/certificates/identity_issuer.yaml")
+
+  depends_on = [
+    kubectl_manifest.linkerd_identity_issuer_issuer
   ]
 }
