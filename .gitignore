@@ -5,6 +5,7 @@
 /*.dll
 /*.so
 /*.dylib
+/z.mesh-support/
 
 /vendor/
 
@@ -39,3 +40,5 @@ terraform.rc
 *.tfplan
 *.tflock
 *.tf.backup
+
+README.md
