@@ -1,24 +1,69 @@
+resource "kubernetes_namespace_v1" "argocd" {
+  metadata {
+    name = "argocd"
+  }
+}
+
+resource "kubernetes_secret_v1" "github_oauth" {
+  metadata {
+    name      = local.github_oauth
+    namespace = kubernetes_namespace_v1.argocd.metadata[0].namespace
+
+    labels = {
+      "app.kubernetes.io/part-of" = "argocd"
+    }
+  }
+
+  type = "Opaque"
+
+  data = {
+    "clientSecret" = var.oidc_client_secret
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.argocd
+  ]
+}
+
 resource "helm_release" "argocd" {
-  namespace        = "argocd"
-  create_namespace = true
+  namespace        = kubernetes_namespace_v1.argocd.metadata[0].namespace
+  create_namespace = false
 
-  name  = "argocd"
-  chart = "argo-cd"
-
+  name       = "argocd"
+  chart      = "argo-cd"
+  version    = "v8.2.5"
   repository = "https://argoproj.github.io/argo-helm"
 
   atomic = true
   wait   = true
 
   set {
-    name = "configs.params.server\\.insecure"
+    name  = "configs.params.server\\.insecure"
     value = true
   }
 
   set {
-    name = "configs.cm.admin\\.enabled"
+    name  = "configs.cm.admin\\.enabled"
     value = false
   }
+
+  values = [
+    <<-EOT
+      url: ${var.server_url}
+      dex.config: |
+        connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: ${var.oidc_client_id}
+            clientSecret: $github-oauth-secret:clientSecret
+    EOT
+  ]
+
+  depends_on = [
+    kubernetes_secret_v1.github_oauth
+  ]
 }
 
 resource "kubectl_manifest" "argocd_applications" {
@@ -36,28 +81,3 @@ resource "kubectl_manifest" "argocd_applications" {
     helm_release.argocd
   ]
 }
-
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: argocd-cm
-#   namespace: argocd
-# data:
-#   url: https://<your-argocd-server-domain>
-#   dex.config: |
-#     connectors:
-#     - type: github
-#       id: github
-#       name: GitHub
-#       config:
-#         clientID: YOUR_CLIENT_ID
-#         clientSecretRef:
-#           name: github-oauth-secret
-#           key: clientSecret
-#         orgs:
-#         - name: YOUR_GITHUB_ORG
-
-# kubectl -n argocd create secret generic github-oauth-secret \
-#   --from-literal=clientSecret=YOUR_CLIENT_SECRET
-
-# kubectl rollout restart deployment argocd-server -n argocd
