@@ -9,6 +9,11 @@ resource "helm_release" "argocd" {
 
   atomic = true
   wait   = true
+
+  set {
+    name = "configs.params.server\\.insecure"
+    value = true
+  }
 }
 
 resource "kubectl_manifest" "argocd_applications" {
