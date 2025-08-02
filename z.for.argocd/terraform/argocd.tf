@@ -49,15 +49,17 @@ resource "helm_release" "argocd" {
 
   values = [
     <<-EOT
-      url: ${var.server_url}
-      dex.config: |
-        connectors:
-        - type: github
-          id: github
-          name: GitHub
-          config:
-            clientID: ${var.oidc_client_id}
-            clientSecret: $github-oauth-secret:clientSecret
+      configs:
+        cm:
+          url: ${var.server_url}
+          dex.config: |
+            connectors:
+            - type: github
+              id: github
+              name: GitHub
+              config:
+                clientID: ${var.oidc_client_id}
+                clientSecret: $github-oauth-secret:clientSecret
     EOT
   ]
 
