@@ -14,6 +14,11 @@ resource "helm_release" "argocd" {
     name = "configs.params.server\\.insecure"
     value = true
   }
+
+  set {
+    name = "configs.cm.admin\\.enabled"
+    value = false
+  }
 }
 
 resource "kubectl_manifest" "argocd_applications" {
@@ -31,3 +36,28 @@ resource "kubectl_manifest" "argocd_applications" {
     helm_release.argocd
   ]
 }
+
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: argocd-cm
+#   namespace: argocd
+# data:
+#   url: https://<your-argocd-server-domain>
+#   dex.config: |
+#     connectors:
+#     - type: github
+#       id: github
+#       name: GitHub
+#       config:
+#         clientID: YOUR_CLIENT_ID
+#         clientSecretRef:
+#           name: github-oauth-secret
+#           key: clientSecret
+#         orgs:
+#         - name: YOUR_GITHUB_ORG
+
+# kubectl -n argocd create secret generic github-oauth-secret \
+#   --from-literal=clientSecret=YOUR_CLIENT_SECRET
+
+# kubectl rollout restart deployment argocd-server -n argocd

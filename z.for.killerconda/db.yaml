@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: db-secret
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 type: Opaque
 data:
   host: cG9zdGdyZXMtZGF0YWJhc2U=
@@ -16,8 +18,11 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: postgres-setup-job
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookFailed
 spec:
-  ttlSecondsAfterFinished: 180
+  ttlSecondsAfterFinished: 30
   template:
     spec:
       containers:
@@ -49,40 +54,39 @@ spec:
             secretKeyRef:
               name: db-secret
               key: name
-        command:
-        - /bin/sh
-        - -c
-        - |
-          echo "Installing necessary tools..."
-          apk add --no-cache git wget postgresql-client
+      command:
+      - /bin/sh
+      - -c
+      - |
+        echo "Installing tools..."
+        apk add --no-cache git wget postgresql-client
 
-          echo "Installing go-migrate..."
-          wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz
-          tar -xzf migrate.linux-amd64.tar.gz
-          mv migrate.linux-amd64 /usr/local/bin/migrate
+        echo "Installing go-migrate..."
+        wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz
+        tar -xzf migrate.linux-amd64.tar.gz
+        mv migrate.linux-amd64 /usr/local/bin/migrate
 
-          echo "Waiting for PostgreSQL to be ready..."
-          until psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME -c '\q'; do
-            sleep 2
-          done
+        echo "Waiting for PostgreSQL to be ready..."
+        until psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME -c "\q"; do
+          sleep 2
+        done
 
-          echo "PostgreSQL is ready."
+        echo "PostgreSQL is ready."
 
-          echo "Installing extensions..."
-          psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME <<EOF
-          CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-          CREATE EXTENSION IF NOT EXISTS "citext";
-          EOF
+        echo "Installing extensions..."
+        echo "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; CREATE EXTENSION IF NOT EXISTS \"citext\";" | \
+          psql -h $DB_HOST -U $DB_USERNAME -d $DB_NAME
 
-          echo "Extensions installed."
+        echo "Cloning repository for migrations..."
+        git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
 
-          echo "Cloning repository for migrations..."
-          git clone https://github.com/hasAnybodySeenHarry/expenses.git /migrations
+        echo "Running migrations..."
+        migrate -path /migrations/migrations \
+          -database "postgres://${DB_USERNAME}:${PGPASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable" up
 
-          echo "Running migrations..."
-          migrate -path /migrations/migrations -database "postgres://$DB_USERNAME:$PGPASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable" up
-
-          echo "Migrations applied."
+        echo "Migrations applied."
+        echo "Setup complete"
+        exit 0
       restartPolicy: Never
 ---
 apiVersion: v1
@@ -91,6 +95,8 @@ metadata:
   name: postgres-database
   labels:
     app: postgres
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   containers:
   - name: postgres-container
@@ -118,6 +124,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres-database
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   type: ClusterIP
   ports:
