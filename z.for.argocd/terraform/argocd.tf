@@ -7,7 +7,7 @@ resource "kubernetes_namespace_v1" "argocd" {
 resource "kubernetes_secret_v1" "github_oauth" {
   metadata {
     name      = local.github_oauth
-    namespace = kubernetes_namespace_v1.argocd.metadata[0].namespace
+    namespace = kubernetes_namespace_v1.argocd.metadata[0].name
 
     labels = {
       "app.kubernetes.io/part-of" = "argocd"
@@ -26,7 +26,7 @@ resource "kubernetes_secret_v1" "github_oauth" {
 }
 
 resource "helm_release" "argocd" {
-  namespace        = kubernetes_namespace_v1.argocd.metadata[0].namespace
+  namespace        = kubernetes_namespace_v1.argocd.metadata[0].name
   create_namespace = false
 
   name       = "argocd"
