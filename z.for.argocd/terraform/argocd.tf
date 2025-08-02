@@ -60,6 +60,8 @@ resource "helm_release" "argocd" {
               config:
                 clientID: ${var.oidc_client_id}
                 clientSecret: $github-oauth-secret:clientSecret
+        rbac:
+          policy.default: "role:admin"
     EOT
   ]
 
