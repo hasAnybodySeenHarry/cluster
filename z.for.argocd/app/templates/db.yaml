@@ -20,7 +20,7 @@ metadata:
   name: postgres-setup-job
   annotations:
     argocd.argoproj.io/hook: PostSync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookFailed
 spec:
   ttlSecondsAfterFinished: 30
   template:
