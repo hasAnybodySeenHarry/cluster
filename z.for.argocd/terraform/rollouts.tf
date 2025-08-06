@@ -4,14 +4,13 @@ resource "kubectl_manifest" "rollouts_rbac" {
     kind: ClusterRole
     metadata:
       name: argo-controller-role
-      namespace: argo-rollouts
     rules:
     - apiGroups:
-    - gateway.networking.k8s.io
-    resources:
-    - httproutes
-    verbs:
-    - "*"
+      - gateway.networking.k8s.io
+      resources:
+      - httproutes
+      verbs:
+      - "*"
     ---
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
