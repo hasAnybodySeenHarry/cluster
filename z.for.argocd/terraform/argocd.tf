@@ -37,20 +37,13 @@ resource "helm_release" "argocd" {
   atomic = true
   wait   = true
 
-  set {
-    name  = "configs.params.server\\.insecure"
-    value = true
-  }
-
-  set {
-    name  = "configs.cm.admin\\.enabled"
-    value = false
-  }
-
   values = [
     <<-EOT
       configs:
+        params:
+          server.insecure: true
         cm:
+          admin.enabled: false
           url: ${var.server_url}
           dex.config: |
             connectors:
@@ -80,6 +73,38 @@ resource "kubectl_manifest" "argocd_applications" {
     source-path     = each.value.source-path
     server-url      = each.value.server-url
   })
+
+  depends_on = [
+    helm_release.argocd
+  ]
+}
+
+resource "kubectl_manifest" "throttler" {
+  yaml_body = <<-YAML
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: throttler-app
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      destination:
+        namespace: argocd
+        server: "https://kubernetes.default.svc"
+      project: default
+      source:
+        repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
+        targetRevision: HEAD
+        path: production/throttler
+        helm:
+          valueFiles:
+          - values.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+  YAML
 
   depends_on = [
     helm_release.argocd
