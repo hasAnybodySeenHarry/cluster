@@ -44,7 +44,7 @@ resource "helm_release" "argo_rollouts" {
     },
     {
       name  = "controller.trafficRouterPlugins[0].location"
-      value = "https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-gatewayapi/releases/download/v0.5.0/gateway-api-plugin-linux-amd64"
+      value = "https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-gatewayapi/releases/download/v0.5.0/gatewayapi-plugin-linux-amd64"
     },
     {
       name  = "fullnameOverride"
