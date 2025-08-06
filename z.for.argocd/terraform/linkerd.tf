@@ -42,6 +42,19 @@ resource "tls_locally_signed_cert" "issuer" {
   ]
 }
 
+resource "kubernetes_manifest" "default_ns_inject" {
+  manifest = {
+    apiVersion = "v1"
+    kind       = "Namespace"
+    metadata = {
+      name = "default"
+      annotations = {
+        "linkerd.io/inject" = "enabled"
+      }
+    }
+  }
+}
+
 resource "helm_release" "linkerd_crds" {
   namespace        = "linkerd"
   create_namespace = true
@@ -53,6 +66,10 @@ resource "helm_release" "linkerd_crds" {
   repository = "https://helm.linkerd.io/edge"
 
   atomic = true
+
+  depends_on = [ 
+    kubernetes_manifest.default_ns_inject 
+  ]
 }
 
 resource "helm_release" "linkerd" {
