@@ -25,6 +25,32 @@ resource "kubernetes_secret_v1" "github_oauth" {
   ]
 }
 
+resource "helm_release" "prometheus_crds" {
+  namespace = "prometheus"
+  create_namespace = true
+
+  name = "prometheus-operator-crds"
+  chart = "prometheus-operator-crds"
+  version = "v22.0.1"
+
+  repository = "https://prometheus-community.github.io/helm-charts"
+
+  atomic = true
+}
+
+resource "helm_release" "linkerd_crds" {
+  namespace        = "linkerd"
+  create_namespace = true
+
+  name    = "linkerd-crds"
+  chart   = "linkerd-crds"
+  version = "2025.7.4"
+
+  repository = "https://helm.linkerd.io/edge"
+
+  atomic = true
+}
+
 resource "helm_release" "argocd" {
   namespace        = kubernetes_namespace_v1.argocd.metadata[0].name
   create_namespace = false
@@ -107,6 +133,8 @@ resource "kubectl_manifest" "throttler" {
   YAML
 
   depends_on = [
+    helm_release.linkerd_crds,
+    helm_release.prometheus_crds,
     helm_release.argocd
   ]
 }
