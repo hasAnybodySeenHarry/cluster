@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: throttler
+      annotations:
+        linkerd.io/inject: enabled
     spec:
       containers:
       - image: xidepid640/throttler:v1.0.0

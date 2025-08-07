@@ -42,6 +42,19 @@ resource "tls_locally_signed_cert" "issuer" {
   ]
 }
 
+resource "helm_release" "linkerd_crds" {
+  namespace        = "linkerd"
+  create_namespace = true
+
+  name    = "linkerd-crds"
+  chart   = "linkerd-crds"
+  version = "2025.7.4"
+
+  repository = "https://helm.linkerd.io/edge"
+
+  atomic = true
+}
+
 resource "helm_release" "linkerd" {
   name             = "linkerd-control-plane"
   namespace        = helm_release.linkerd_crds.namespace
@@ -85,17 +98,4 @@ resource "helm_release" "linkerd" {
   depends_on = [
     helm_release.linkerd_crds
   ]
-}
-
-resource "helm_release" "linkerd_crds" {
-  namespace        = "linkerd"
-  create_namespace = true
-
-  name    = "linkerd-crds"
-  chart   = "linkerd-crds"
-  version = "2025.7.4"
-
-  repository = "https://helm.linkerd.io/edge"
-
-  atomic = true
 }
