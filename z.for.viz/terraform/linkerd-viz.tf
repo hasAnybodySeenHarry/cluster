@@ -1,4 +1,4 @@
-resource "helm_release" "linkerd" {
+resource "helm_release" "linkerd_viz" {
   name             = "linkerd-viz"
   namespace        = "linkerd-viz"
   repository       = "https://helm.linkerd.io/edge"
