@@ -1,16 +1,16 @@
-resource "helm_release" "linkerd" {
+resource "helm_release" "linkerd_viz" {
   name             = "linkerd-viz"
-  namespace        = helm_release.linkerd_crds.namespace
-  repository       = "https://helm.linkerd.io/stable"
+  namespace        = "linkerd-viz"
+  repository       = "https://helm.linkerd.io/edge"
   chart            = "linkerd-viz"
-  version          = "v30.12.11"
-  create_namespace = false
+  version          = "2025.8.1"
+  create_namespace = true
 
   atomic = true
 
-  values = [ 
+  values = [
     <<-EOT
-      linkerdVersion: edge-2025.7.4
+      linkerdVersion: "edge-25.8.1"
       tapInjector:
         replicas: 0
       dashboard:
@@ -18,7 +18,7 @@ resource "helm_release" "linkerd" {
       tap:
         replicas: 0
     EOT
-   ]
+  ]
 
   depends_on = [
     helm_release.linkerd
