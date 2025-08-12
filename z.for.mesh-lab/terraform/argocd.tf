@@ -29,3 +29,37 @@ resource "kubectl_manifest" "argocd_applications" {
     helm_release.argocd
   ]
 }
+
+resource "kubectl_manifest" "throttler" {
+  yaml_body = <<-YAML
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: throttler-app
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      destination:
+        namespace: argocd
+        server: "https://kubernetes.default.svc"
+      project: default
+      source:
+        repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
+        targetRevision: HEAD
+        path: production/throttler
+        helm:
+          valueFiles:
+          - values.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+  YAML
+
+  depends_on = [
+    helm_release.linkerd_crds,
+    # helm_release.prometheus_crds,
+    helm_release.argocd
+  ]
+}

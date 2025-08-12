@@ -16,7 +16,7 @@ spec:
     path: production/throttler
     helm:
       valueFiles:
-        - values.yaml
+      - values.yaml
   syncPolicy:
     automated:
       prune: true

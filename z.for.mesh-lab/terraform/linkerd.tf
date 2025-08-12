@@ -65,35 +65,32 @@ resource "helm_release" "linkerd" {
 
   atomic = true
 
-  set {
-    name  = "identityTrustAnchorsPEM"
-    value = tls_locally_signed_cert.issuer.ca_cert_pem
-  }
-
-  set {
-    name  = "identity.issuer.tls.crtPEM"
-    value = tls_locally_signed_cert.issuer.cert_pem
-  }
-
-  set {
-    name  = "identity.issuer.tls.keyPEM"
-    value = tls_private_key.issuer.private_key_pem
-  }
-
-  set {
-    name  = "proxy.logLevel"
-    value = "error"
-  }
-
-  set {
-    name  = "proxy.nativeSidecar"
-    value = false
-  }
-
-  set {
-    name  = "proxy.enableShutdownEndpoint"
-    value = true
-  }
+  set = [
+    {
+      name  = "identityTrustAnchorsPEM"
+      value = tls_locally_signed_cert.issuer.ca_cert_pem
+    },
+    {
+      name  = "identity.issuer.tls.crtPEM"
+      value = tls_locally_signed_cert.issuer.cert_pem
+    },
+    {
+      name  = "identity.issuer.tls.keyPEM"
+      value = tls_private_key.issuer.private_key_pem
+    },
+    {
+      name  = "proxy.logLevel"
+      value = "error"
+    },
+    {
+      name  = "proxy.nativeSidecar"
+      value = false
+    },
+    {
+      name  = "proxy.enableShutdownEndpoint"
+      value = true
+    }
+  ]
 
   depends_on = [
     helm_release.linkerd_crds

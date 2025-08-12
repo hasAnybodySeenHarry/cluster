@@ -1,8 +1,0 @@
-apiVersion: policy.linkerd.io/v1alpha1
-kind: MeshTLSAuthentication
-metadata:
-  name: {{ include "app.fullname" . }}-app-authn
-  namespace: {{ .Values.namespace }}
-spec:
-  identities:
-  - "default.default.serviceaccount.identity.linkerd.cluster.local"
