@@ -138,7 +138,7 @@ resource "kubectl_manifest" "control_plane_monitor" {
   YAML
 
   depends_on = [
-    kubectl_manifest.infra
+    helm_release.prometheus_crds
   ]
 }
 
@@ -173,6 +173,6 @@ resource "kubectl_manifest" "data_plane_monitor" {
   YAML
 
   depends_on = [
-    kubectl_manifest.infra
+    helm_release.prometheus_crds
   ]
 }
