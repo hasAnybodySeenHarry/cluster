@@ -54,7 +54,7 @@ resource "helm_release" "prometheus" {
   ]
 }
 
-resource "kubectl_manifest" "monitoring" {
+resource "kubectl_manifest" "control_plane_monitor" {
   yaml_body = <<-YAML
     apiVersion: monitoring.coreos.com/v1
     kind: PodMonitor
@@ -132,6 +132,41 @@ resource "kubectl_manifest" "monitoring" {
           regex: __tmp_pod_label_linkerd_io_(.+)
         - action: labelmap
           regex: __tmp_pod_label_(.+)
+        scrapeTimeout: 10s
+      selector:
+        matchLabels: {}
+  YAML
+
+  depends_on = [
+    kubectl_manifest.infra
+  ]
+}
+
+resource "kubectl_manifest" "data_plane_monitor" {
+  yaml_body = <<-YAML
+    apiVersion: monitoring.coreos.com/v1
+    kind: PodMonitor
+    metadata:
+      labels:
+        linkerd.io/control-plane-ns: linkerd
+      name: linkerd-controller
+      namespace: linkerd
+    spec:
+      namespaceSelector:
+        matchNames:
+        - linkerd
+        - linkerd-viz
+      podMetricsEndpoints:
+      - interval: 10s
+        relabelings:
+        - action: keep
+          regex: admin-http
+          sourceLabels:
+          - __meta_kubernetes_pod_container_port_name
+        - action: replace
+          sourceLabels:
+          - __meta_kubernetes_pod_container_name
+          targetLabel: component
         scrapeTimeout: 10s
       selector:
         matchLabels: {}

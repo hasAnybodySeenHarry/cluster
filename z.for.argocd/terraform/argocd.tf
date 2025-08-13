@@ -80,7 +80,7 @@ resource "kubectl_manifest" "argocd_applications" {
   ]
 }
 
-resource "kubectl_manifest" "infra" {
+resource "kubectl_manifest" "throttler" {
   yaml_body = <<-YAML
     apiVersion: argoproj.io/v1alpha1
     kind: Application
@@ -108,13 +108,13 @@ resource "kubectl_manifest" "infra" {
   YAML
 
   depends_on = [
-    helm_release.linkerd_crds,
-    helm_release.prometheus_crds,
-    helm_release.argocd
+    kubectl_manifest.redis_secret,
+    kubectl_manifest.redis,
+    kubectl_manifest.redis_service
   ]
 }
 
-resource "kubectl_manifest" "throttler" {
+resource "kubectl_manifest" "redis_secret" {
   yaml_body = <<-YAML
     apiVersion: v1
     kind: Secret
@@ -124,7 +124,11 @@ resource "kubectl_manifest" "throttler" {
     data:
       addr: cmVkaXMtZGF0YWJhc2U6NjM3OQ==
       password: cGFzc3dvcmQ=
-    ---
+  YAML
+}
+
+resource "kubectl_manifest" "redis" {
+  yaml_body = <<-YAML
     apiVersion: v1
     kind: Pod
     metadata:
@@ -144,7 +148,11 @@ resource "kubectl_manifest" "throttler" {
             secretKeyRef:
               name: redis-secrets
               key: password
-    ---
+  YAML
+}
+
+resource "kubectl_manifest" "redis_service" {
+  yaml_body = <<-YAML
     apiVersion: v1
     kind: Service
     metadata:
@@ -159,7 +167,11 @@ resource "kubectl_manifest" "throttler" {
         protocol: TCP
         port: 6379
       type: ClusterIP
-    ---
+  YAML
+}
+
+resource "kubectl_manifest" "ingress" {
+  yaml_body = <<-YAML
     apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
@@ -182,6 +194,6 @@ resource "kubectl_manifest" "throttler" {
   YAML
 
   depends_on = [
-    kubectl_manifest.infra
+    helm_release.nginx
   ]
 }
