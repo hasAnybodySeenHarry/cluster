@@ -12,6 +12,8 @@ resource "helm_release" "prometheus_crds" {
 }
 
 resource "helm_release" "prometheus" {
+  count = 0
+  
   name             = "prometheus"
   namespace        = helm_release.prometheus_crds.namespace
   repository       = "https://prometheus-community.github.io/helm-charts"
