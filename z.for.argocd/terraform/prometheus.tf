@@ -13,7 +13,7 @@ resource "helm_release" "prometheus_crds" {
 
 resource "helm_release" "prometheus" {
   name             = "prometheus"
-  namespace        = helm_release.linkerd_crds.namespace
+  namespace        = helm_release.prometheus_crds.namespace
   repository       = "https://prometheus-community.github.io/helm-charts"
   chart            = "kube-prometheus-stack"
   version          = "v76.3.0"
