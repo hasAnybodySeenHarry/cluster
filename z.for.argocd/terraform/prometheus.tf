@@ -54,7 +54,7 @@ resource "helm_release" "prometheus" {
   ]
 }
 
-resource "kubectl_manifest" "throttler" {
+resource "kubectl_manifest" "monitoring" {
   yaml_body = <<-YAML
     apiVersion: monitoring.coreos.com/v1
     kind: PodMonitor
