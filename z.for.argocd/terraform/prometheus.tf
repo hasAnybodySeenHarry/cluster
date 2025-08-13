@@ -61,33 +61,6 @@ resource "kubectl_manifest" "control_plane_monitor" {
     metadata:
       labels:
         linkerd.io/control-plane-ns: linkerd
-      name: linkerd-controller
-      namespace: linkerd
-    spec:
-      namespaceSelector:
-        matchNames:
-        - linkerd
-        - linkerd-viz
-      podMetricsEndpoints:
-      - interval: 10s
-        relabelings:
-        - action: keep
-          regex: admin-http
-          sourceLabels:
-          - __meta_kubernetes_pod_container_port_name
-        - action: replace
-          sourceLabels:
-          - __meta_kubernetes_pod_container_name
-          targetLabel: component
-        scrapeTimeout: 10s
-      selector:
-        matchLabels: {}
-    ---
-    apiVersion: monitoring.coreos.com/v1
-    kind: PodMonitor
-    metadata:
-      labels:
-        linkerd.io/control-plane-ns: linkerd
       name: linkerd-proxy
       namespace: linkerd
     spec:
@@ -173,6 +146,7 @@ resource "kubectl_manifest" "data_plane_monitor" {
   YAML
 
   depends_on = [
-    helm_release.prometheus_crds
+    helm_release.prometheus_crds,
+    helm_release.linkerd_crds
   ]
 }
