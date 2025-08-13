@@ -80,7 +80,7 @@ resource "kubectl_manifest" "argocd_applications" {
   ]
 }
 
-resource "kubectl_manifest" "throttler" {
+resource "kubectl_manifest" "infra" {
   yaml_body = <<-YAML
     apiVersion: argoproj.io/v1alpha1
     kind: Application
@@ -111,5 +111,77 @@ resource "kubectl_manifest" "throttler" {
     helm_release.linkerd_crds,
     helm_release.prometheus_crds,
     helm_release.argocd
+  ]
+}
+
+resource "kubectl_manifest" "throttler" {
+  yaml_body = <<-YAML
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: redis-secrets
+    type: Opaque
+    data:
+      addr: cmVkaXMtZGF0YWJhc2U6NjM3OQ==
+      password: cGFzc3dvcmQ=
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: redis
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis-container
+        image: redis:alpine
+        command: ["sh", "-c", "redis-server --requirepass $REDIS_PASSWORD"]
+        ports:
+        - containerPort: 6379
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secrets
+              key: password
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: redis-database
+      labels:
+        app: redis
+    spec:
+      selector:
+        app: redis
+      ports:
+      - targetPort: 6379
+        protocol: TCP
+        port: 6379
+      type: ClusterIP
+    ---
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: throttler-ingress
+      namespace: default
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+    spec:
+      ingressClassName: nginx
+      rules:
+      - http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: throttler-active
+                port:
+                  number: 8080
+  YAML
+
+  depends_on = [
+    kubectl_manifest.infra
   ]
 }

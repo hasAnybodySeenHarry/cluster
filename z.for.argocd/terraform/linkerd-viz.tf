@@ -1,4 +1,6 @@
 resource "helm_release" "linkerd_viz" {
+  count = 0
+
   name             = "linkerd-viz"
   namespace        = "linkerd-viz"
   repository       = "https://helm.linkerd.io/edge"

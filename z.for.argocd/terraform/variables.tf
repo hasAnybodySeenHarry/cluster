@@ -26,3 +26,9 @@ variable "server_url" {
   description = "The base url of the Argo CD server"
   type        = string
 }
+
+variable "inject_mesh" {
+  type        = bool
+  default     = false
+  description = "Whether to inject data plane proxies into prometheus components"
+}

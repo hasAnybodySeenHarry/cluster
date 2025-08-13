@@ -57,6 +57,8 @@ resource "helm_release" "argo_rollouts" {
   ]
 
   depends_on = [
-    kubectl_manifest.rollouts_rbac
+    kubectl_manifest.rollouts_rbac,
+    helm_release.linkerd_crds,
+    helm_release.prometheus_crds
   ]
 }
