@@ -8,11 +8,13 @@ resource "helm_release" "loki_stack" {
 
   repository = "https://grafana.github.io/helm-charts"
 
-  #   values = [
-  #     <<-YAML
+    values = [
+      <<-YAML
+        grafana:
+          enabled: true
+      YAML
+    ]
 
-  #     YAML
-  #   ]
   depends_on = [
     helm_release.prometheus_crds
   ]
