@@ -1,0 +1,7 @@
+namespace: default
+
+nameOverride: ""
+fullnameOverride: "throttler"
+
+livenessProbe:
+  path: /v1/healthcheck

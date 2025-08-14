@@ -32,3 +32,8 @@ variable "inject_mesh" {
   default     = false
   description = "Whether to inject data plane proxies into prometheus components"
 }
+
+variable "chart_version" {
+  type = string
+  description = "The version of loki-stack Helm chart to install"
+}
