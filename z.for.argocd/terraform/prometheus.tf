@@ -12,7 +12,7 @@ resource "helm_release" "prometheus_crds" {
 }
 
 resource "helm_release" "prometheus" {
-  count = 0
+  count = 1
 
   name             = "prometheus"
   namespace        = helm_release.prometheus_crds.namespace
