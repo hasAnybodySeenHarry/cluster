@@ -1,5 +1,5 @@
 resource "helm_release" "nginx" {
-  count = 0
+  count = 1
 
   namespace        = "ingress-nginx"
   create_namespace = true

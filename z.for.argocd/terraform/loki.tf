@@ -1,4 +1,5 @@
 resource "helm_release" "loki_stack" {
+  count = 0
   namespace        = local.loki_namespace
   create_namespace = false
 
