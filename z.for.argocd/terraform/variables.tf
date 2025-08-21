@@ -34,6 +34,6 @@ variable "inject_mesh" {
 }
 
 variable "chart_version" {
-  type = string
+  type        = string
   description = "The version of loki-stack Helm chart to install"
 }

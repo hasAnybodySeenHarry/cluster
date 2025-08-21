@@ -1,5 +1,5 @@
 resource "helm_release" "loki_stack" {
-  count = 0
+  count            = 0
   namespace        = local.loki_namespace
   create_namespace = false
 
@@ -9,12 +9,12 @@ resource "helm_release" "loki_stack" {
 
   repository = "https://grafana.github.io/helm-charts"
 
-    values = [
-      <<-YAML
+  values = [
+    <<-YAML
         grafana:
           enabled: true
       YAML
-    ]
+  ]
 
   depends_on = [
     helm_release.prometheus_crds

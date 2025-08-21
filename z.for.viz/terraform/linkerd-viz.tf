@@ -8,7 +8,7 @@ resource "helm_release" "linkerd_viz" {
 
   atomic = true
 
-  values = [ 
+  values = [
     <<-EOT
       linkerdVersion: "edge-25.8.1"
       tapInjector:
@@ -18,7 +18,7 @@ resource "helm_release" "linkerd_viz" {
       tap:
         replicas: 0
     EOT
-   ]
+  ]
 
   depends_on = [
     helm_release.linkerd

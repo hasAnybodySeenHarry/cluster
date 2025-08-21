@@ -6,5 +6,5 @@ locals {
   github_oauth = "github-oauth-secret"
 
   loki_namespace = "monitoring"
-  loki_chart = "loki-stack"
+  loki_chart     = "loki-stack"
 }

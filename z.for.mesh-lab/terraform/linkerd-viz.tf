@@ -20,7 +20,7 @@ resource "helm_release" "linkerd_viz" {
     EOT
   ]
 
-  depends_on = [ 
-    helm_release.linkerd 
+  depends_on = [
+    helm_release.linkerd
   ]
 }

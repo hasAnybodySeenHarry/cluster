@@ -77,7 +77,7 @@ resource "kubectl_manifest" "linkerd_trust_anchor" {
 
 resource "null_resource" "linkerd_previous_anchor" {
   provisioner "local-exec" {
-    command = <<-EOT
+    command     = <<-EOT
       #!/bin/bash
       set -e
 

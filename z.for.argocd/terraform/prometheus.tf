@@ -40,7 +40,7 @@ resource "helm_release" "prometheus" {
   values = [
     <<-EOT
       grafana:
-        enabled: true
+        enabled: false
       alertmanager:
         enabled: false
       kubeStateMetrics:
