@@ -1,10 +1,11 @@
 resource "helm_release" "prometheus" {
   name             = "prometheus"
   namespace        = "monitoring"
+  create_namespace = true
+
   repository       = "https://prometheus-community.github.io/helm-charts"
   chart            = "kube-prometheus-stack"
   version          = "v76.3.0"
-  create_namespace = true
 
   set = concat(
     [
@@ -27,11 +28,11 @@ resource "helm_release" "prometheus" {
       grafana:
         enabled: false
       alertmanager:
-        enabled: false
+        enabled: true
       kubeStateMetrics:
-        enabled: false
+        enabled: true
       nodeExporter:
-        enabled: false
+        enabled: true
     EOT
   ]
 }

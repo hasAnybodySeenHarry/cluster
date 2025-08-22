@@ -3,3 +3,4 @@ variable "inject_mesh" {
   default     = false
   description = "Whether to inject data plane proxies into prometheus components"
 }
+
