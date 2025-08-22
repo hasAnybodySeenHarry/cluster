@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: always-firing-test
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+  - name: test.rules
+    rules:
+    - alert: AlwaysFiringTestAlert
+      expr: vector(1)
+      for: 10s
+      labels:
+        severity: critical
+        namespace: monitoring
+      annotations:
+        summary: "Test alert firing immediately"
+        description: "This is a dummy alert that always fires to test Alertmanager / Slack integration."
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-nodeexporter
+  namespace: monitoring
+spec:
+  route:
+    matchers:
+    - name: alertname
+      value: AlwaysFiringTestAlert
+      matchType: =
+    receiver: slack
+  receivers:
+  - name: slack
+    slackConfigs:
+    - apiURL:
+        name: slack-webhook-secret
+        key: url
+      channel: "#alerts-prod"
