@@ -22,6 +22,7 @@ spec:
       labels:
         severity: warning
         app: {{ include "app.fullname" . }}
+        namespace: {{ .Values.monitoring.namespace }}
       annotations:
         summary: 'Inbound TLS requests for {{ include "app.fullname" . }}'
         description: 'High rate of inbound TLS requests detected for {{ include "app.fullname" . }}.'
@@ -40,6 +41,7 @@ spec:
       labels:
         severity: warning
         app: {{ include "app.fullname" . }}
+        namespace: {{ .Values.monitoring.namespace }}
       annotations:
         summary: '95th percentile latency for {{ include "app.fullname" . }}'
         description: 'p95 latency is high for {{ include "app.fullname" . }}.'
@@ -64,6 +66,7 @@ spec:
       labels:
         severity: critical
         app: {{ include "app.fullname" . }}
+        namespace: {{ .Values.monitoring.namespace }}
       annotations:
         summary: 'Low success rate for {{ include "app.fullname" . }}'
         description: 'The success ratio of responses is low for {{ include "app.fullname" . }}.'
