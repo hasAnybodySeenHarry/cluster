@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "app.fullname" . }}-rules
+  namespace: {{ .Values.namespace }}
+  labels:
+    release: prometheus
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  groups:
+  - name: {{ include "app.fullname" . }}.rules
+    rules:
+    - alert: {{ include "app.fullname" . | title }}TLSInboundRequestsHigh
+      expr: |
+        sum(rate(request_total{
+          namespace="default",
+          direction="inbound",
+          tls="true",
+          app_kubernetes_io_name="{{ include "app.fullname" . }}"
+        }[30s]))
+      for: 1m
+      labels:
+        severity: warning
+        app: {{ include "app.fullname" . }}
+      annotations:
+        summary: 'Inbound TLS requests for {{ include "app.fullname" . }}'
+        description: 'High rate of inbound TLS requests detected for {{ include "app.fullname" . }}.'
+
+    - alert: {{ include "app.fullname" . | title }}P95LatencyHigh
+      expr: |
+        histogram_quantile(
+          0.95,
+          sum(rate(response_latency_ms_bucket{
+            namespace="default",
+            direction="inbound",
+            app_kubernetes_io_name="{{ include "app.fullname" . }}"
+          }[30s])) by (le)
+        )
+      for: 1m
+      labels:
+        severity: warning
+        app: {{ include "app.fullname" . }}
+      annotations:
+        summary: '95th percentile latency for {{ include "app.fullname" . }}'
+        description: 'p95 latency is high for {{ include "app.fullname" . }}.'
+
+    - alert: {{ include "app.fullname" . | title }}LowSuccessRate
+      expr: |
+        (
+          sum(rate(response_total{
+            classification="success",
+            namespace="default",
+            direction="inbound",
+            app_kubernetes_io_name="{{ include "app.fullname" . }}"
+          }[5m]))
+          /
+          sum(rate(response_total{
+            namespace="default",
+            direction="inbound",
+            app_kubernetes_io_name="{{ include "app.fullname" . }}"
+          }[5m]))
+        )
+      for: 2m
+      labels:
+        severity: critical
+        app: {{ include "app.fullname" . }}
+      annotations:
+        summary: 'Low success rate for {{ include "app.fullname" . }}'
+        description: 'The success ratio of responses is low for {{ include "app.fullname" . }}.'

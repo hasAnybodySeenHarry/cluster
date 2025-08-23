@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ include "app.fullname" . }}-slack
+  namespace: {{ .Values.namespace }}
+spec:
+  route:
+    receiver: {{ include "app.fullname" . }}-slack
+    matchers:
+    - name: app
+      value: {{ include "app.fullname" . }}
+      matchType: =
+  receivers:
+  - name: {{ include "app.fullname" . }}-slack
+    slackConfigs:
+    - apiURL:
+        name: {{ include "app.fullname" . }}-slack-webhook
+        key: url
+      channel: "#alerts-prod"

@@ -5,3 +5,6 @@ fullnameOverride: "throttler"
 
 livenessProbe:
   path: /v1/healthcheck
+
+monitoring:
+  namespace: monitoring
