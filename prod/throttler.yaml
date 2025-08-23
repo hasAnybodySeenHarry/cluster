@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: "https://github.com/hasAnybodySeenHarry/cluster"
     targetRevision: HEAD
-    path: prod/throttler
+    path: production/throttler
     helm:
       valueFiles:
       - values.yaml
