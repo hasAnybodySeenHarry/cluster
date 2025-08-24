@@ -64,6 +64,14 @@ resource "helm_release" "argocd" {
   ]
 }
 
+resource "time_sleep" "wait_3m_when_destroy" {
+  depends_on = [
+    helm_release.argocd
+  ]
+
+  destroy_duration = "3m"
+}
+
 resource "kubectl_manifest" "argocd_applications" {
   for_each = local.argocd_apps
 
@@ -76,6 +84,7 @@ resource "kubectl_manifest" "argocd_applications" {
   })
 
   depends_on = [
-    helm_release.argocd
+    helm_release.argocd,
+    time_sleep.wait_3m_when_destroy
   ]
 }
