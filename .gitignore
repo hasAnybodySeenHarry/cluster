@@ -5,7 +5,7 @@
 /*.dll
 /*.so
 /*.dylib
-/z.mesh-support/
+/z.support
 
 /vendor/
 
