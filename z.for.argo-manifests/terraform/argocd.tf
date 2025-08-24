@@ -84,7 +84,6 @@ resource "kubectl_manifest" "argocd_applications" {
   })
 
   depends_on = [
-    helm_release.argocd,
     time_sleep.wait_3m_when_destroy
   ]
 }
