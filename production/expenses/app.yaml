@@ -11,7 +11,7 @@ spec:
     server: "https://kubernetes.default.svc"
   project: default
   source:
-    repoURL: "https://raw.githubusercontent.com/hasAnybodySeenHarry/services/main/dev/"
+    repoURL: "https://raw.githubusercontent.com/hasAnybodySeenHarry/services/main/develop/"
     chart: expenses
     targetRevision: "*"
     helm:
