@@ -11,7 +11,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: default
   source:
-    repoURL: "https://raw.githubusercontent.com/hasAnybodySeenHarry/services/main/develop/"
+    repoURL: "https://raw.githubusercontent.com/hasAnybodySeenHarry/charts/main/develop/"
     chart: mailer
     targetRevision: '*'
     helm:
