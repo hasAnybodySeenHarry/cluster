@@ -6,3 +6,4 @@ metadata:
 spec:
   identities:
   - "default.default.serviceaccount.identity.linkerd.cluster.local"
+  - "ingress-nginx.ingress-nginx.serviceaccount.identity.linkerd.cluster.local"
